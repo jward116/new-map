@@ -1,0 +1,6 @@
+{
+  "updatedAt": "2026-04-30T19:33:18.334Z",
+  "boundary": "Public AIANNH reference boundary from USFS/USDA ArcGIS REST service using Census TIGER/Line data.",
+  "parcels": "County parcel data is linked out instead of stored in GitHub because full parcel layers are large and may require county-specific terms or services.",
+  "workflow": "Run npm run sync:data, review public/data/*.json and *.geojson, then commit the files."
+}

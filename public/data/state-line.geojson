@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "name": "ks-ne-state-line-demo",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Kansas / Nebraska State Line - DEMO 40th Parallel",
+        "source": "DEMO ONLY - replace with official state boundary line when available",
+        "data_quality": "DEMO_ONLY"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-95.55, 40.0000],
+          [-95.05, 40.0000]
+        ]
+      }
+    }
+  ]
+}

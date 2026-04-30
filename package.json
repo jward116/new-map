@@ -1,0 +1,24 @@
+{
+  "name": "itkn-field-map",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "sync:data": "node scripts/sync-public-data.mjs"
+  },
+  "dependencies": {
+    "@turf/boolean-point-in-polygon": "^7.2.0",
+    "@turf/distance": "^7.2.0",
+    "@turf/helpers": "^7.2.0",
+    "leaflet": "^1.9.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.11"
+  }
+}
