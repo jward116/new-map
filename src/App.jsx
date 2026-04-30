@@ -644,6 +644,35 @@ export default function App() {
     });
   }, [places, layerVisibility.places]);
 
+  useEffect(() => {
+    if (!mapRef.current) return;
+    if (layersRef.current.baseMap) return;
+    applyBasemap(selectedBasemap);
+  }, []);
+
+  function applyBasemap(key) {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const cfg = BASEMAPS[key] || BASEMAPS.satellite;
+
+    if (layersRef.current.baseMap) {
+      map.removeLayer(layersRef.current.baseMap);
+      layersRef.current.baseMap = null;
+    }
+
+    const nextBaseMap = L.tileLayer(cfg.url, {
+      ...cfg.options,
+      zIndex: 1
+    });
+
+    nextBaseMap.addTo(map);
+    nextBaseMap.bringToBack();
+
+    layersRef.current.baseMap = nextBaseMap;
+    setSelectedBasemap(key);
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -714,7 +743,7 @@ export default function App() {
                   type="button"
                   key={key}
                   className={selectedBasemap === key ? 'basemap active' : 'basemap'}
-                  onClick={() => setSelectedBasemap(key)}
+                  onClick={() => applyBasemap(key)}
                 >
                   {cfg.label}
                 </button>
