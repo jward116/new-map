@@ -405,3 +405,62 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     font-size: 0.66rem;
   }
 }
+
+
+/* Version 2.2b always-visible phone map view buttons */
+.quick-view-bar {
+  position: fixed;
+  z-index: 650;
+  top: 118px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  gap: 7px;
+  pointer-events: auto;
+}
+
+.quick-view {
+  flex: 1;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.86);
+  color: #e5e7eb;
+  border-radius: 999px;
+  padding: 9px 8px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.26);
+  backdrop-filter: blur(10px);
+}
+
+.quick-view.active {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.96), rgba(14, 116, 144, 0.96));
+  border-color: rgba(34, 197, 94, 0.9);
+  color: white;
+}
+
+@media (min-width: 721px) {
+  .quick-view-bar {
+    top: 126px;
+    left: 18px;
+    right: auto;
+    width: 430px;
+  }
+}
+
+@media (max-width: 720px) {
+  .quick-view-bar {
+    top: calc(max(8px, env(safe-area-inset-top)) + 112px);
+    left: 8px;
+    right: 8px;
+    gap: 5px;
+  }
+
+  .quick-view {
+    padding: 8px 4px;
+    font-size: 0.68rem;
+  }
+
+  .status-card {
+    top: calc(max(8px, env(safe-area-inset-top)) + 158px);
+  }
+}

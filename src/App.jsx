@@ -582,7 +582,35 @@ export default function App() {
         <button className="menu-btn" onClick={() => setDrawerOpen((v) => !v)}>{drawerOpen ? 'Hide panel' : 'Show panel'}</button>
       </header>
 
-      <section className="status-card">
+      
+      <div className="quick-view-bar" aria-label="Map view selector">
+        <button
+          className={selectedBasemap === 'street' ? 'quick-view active' : 'quick-view'}
+          onClick={() => setSelectedBasemap('street')}
+        >
+          Street
+        </button>
+        <button
+          className={selectedBasemap === 'satellite' ? 'quick-view active' : 'quick-view'}
+          onClick={() => setSelectedBasemap('satellite')}
+        >
+          Satellite
+        </button>
+        <button
+          className={selectedBasemap === 'topo' ? 'quick-view active' : 'quick-view'}
+          onClick={() => setSelectedBasemap('topo')}
+        >
+          Topo
+        </button>
+        <button
+          className={selectedBasemap === 'dark' ? 'quick-view active' : 'quick-view'}
+          onClick={() => setSelectedBasemap('dark')}
+        >
+          Dark
+        </button>
+      </div>
+
+<section className="status-card">
         <div className="status-main">
           <DataBadge danger={demoDataLoaded}>DATA: {demoDataLoaded ? 'DEMO FALLBACK - REPLACE' : 'Public boundary loaded'}</DataBadge>
           <DataBadge danger={!insideResult.inside}>{insideResult.inside ? 'INSIDE loaded boundary' : 'OUTSIDE loaded boundary'}</DataBadge>
