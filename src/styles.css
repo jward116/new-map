@@ -542,3 +542,44 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     padding: 7px;
   }
 }
+
+
+/* Version 2.5 clickable legend category filters */
+.legend-grid button,
+.legend-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.66);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 12px;
+  padding: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.legend-filter.active {
+  border-color: rgba(34, 197, 94, 0.45);
+  background: rgba(15, 23, 42, 0.82);
+}
+
+.legend-filter:not(.active) {
+  opacity: 0.42;
+  filter: grayscale(0.8);
+}
+
+.legend-filter strong {
+  font-size: 0.78rem;
+  color: #e5e7eb;
+}
+
+.hide-law .leaflet-marker-icon.marker-law,
+.hide-court .leaflet-marker-icon.marker-court,
+.hide-gov .leaflet-marker-icon.marker-gov,
+.hide-business .leaflet-marker-icon.marker-business,
+.hide-farm .leaflet-marker-icon.marker-farm,
+.hide-place .leaflet-marker-icon.marker-place {
+  display: none !important;
+  pointer-events: none !important;
+}

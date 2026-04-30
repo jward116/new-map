@@ -219,6 +219,14 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [placeDraft, setPlaceDraft] = useState({ name: '', type: 'Field Point', phone: '', notes: '' });
   const [layerVisibility, setLayerVisibility] = useState({ boundary: true, stateLine: true, places: true, accuracy: true });
+  const [categoryVisibility, setCategoryVisibility] = useState({
+    law: true,
+    court: true,
+    gov: true,
+    business: true,
+    farm: true,
+    place: true
+  });
   const [selectedBasemap, setSelectedBasemap] = useState('satellite');
 
   const activePoint = selectedPoint || location;
@@ -673,6 +681,18 @@ export default function App() {
     setSelectedBasemap(key);
   }
 
+  function toggleCategory(category) {
+    setCategoryVisibility((prev) => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  }
+
+  const hiddenCategoryClasses = Object.entries(categoryVisibility)
+    .filter(([, visible]) => !visible)
+    .map(([category]) => `hide-${category}`)
+    .join(' ');
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -719,12 +739,12 @@ export default function App() {
           <h2>Map legend</h2>
 
           <div className="legend-grid">
-            <div><span className="legend-icon marker-law">🛡</span><strong>Law Enforcement</strong></div>
-            <div><span className="legend-icon marker-court">⚖</span><strong>Court</strong></div>
-            <div><span className="legend-icon marker-gov">🏛</span><strong>Government</strong></div>
-            <div><span className="legend-icon marker-business">🏢</span><strong>Business</strong></div>
-            <div><span className="legend-icon marker-farm">🌾</span><strong>Farm / Ag</strong></div>
-            <div><span className="legend-icon marker-place">📍</span><strong>Public Place</strong></div>
+            <button type="button" className={categoryVisibility.law ? 'legend-filter active' : 'legend-filter'} onClick={() => toggleCategory('law')}><span className="legend-icon marker-law">🛡</span><strong>Law Enforcement</strong></button>
+            <button type="button" className={categoryVisibility.court ? 'legend-filter active' : 'legend-filter'} onClick={() => toggleCategory('court')}><span className="legend-icon marker-court">⚖</span><strong>Court</strong></button>
+            <button type="button" className={categoryVisibility.gov ? 'legend-filter active' : 'legend-filter'} onClick={() => toggleCategory('gov')}><span className="legend-icon marker-gov">🏛</span><strong>Government</strong></button>
+            <button type="button" className={categoryVisibility.business ? 'legend-filter active' : 'legend-filter'} onClick={() => toggleCategory('business')}><span className="legend-icon marker-business">🏢</span><strong>Business</strong></button>
+            <button type="button" className={categoryVisibility.farm ? 'legend-filter active' : 'legend-filter'} onClick={() => toggleCategory('farm')}><span className="legend-icon marker-farm">🌾</span><strong>Farm / Ag</strong></button>
+            <button type="button" className={categoryVisibility.place ? 'legend-filter active' : 'legend-filter'} onClick={() => toggleCategory('place')}><span className="legend-icon marker-place">📍</span><strong>Public Place</strong></button>
           </div>
 
           <div className="legend-lines">
