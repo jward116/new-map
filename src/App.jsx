@@ -291,11 +291,6 @@ export default function App() {
     const map = L.map(mapElRef.current, { zoomControl: false, preferCanvas: true }).setView(DEFAULT_CENTER, DEFAULT_ZOOM);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
     L.control.scale({ imperial: true, metric: true, position: 'bottomleft' }).addTo(map);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20,
-      subdomains: 'abcd',
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-    }).addTo(map);
 
     map.on('click', (e) => {
       setSelectedPoint({ lat: e.latlng.lat, lng: e.latlng.lng, accuracy: null, source: 'Map click' });
@@ -317,7 +312,10 @@ export default function App() {
     }
 
     const cfg = BASEMAPS[selectedBasemap] || BASEMAPS.street;
-    layersRef.current.baseMap = L.tileLayer(cfg.url, cfg.options).addTo(map);
+    layersRef.current.baseMap = L.tileLayer(cfg.url, {
+      ...cfg.options,
+      zIndex: 1
+    }).addTo(map);
     layersRef.current.baseMap.bringToBack();
   }, [selectedBasemap]);
 
