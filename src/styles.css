@@ -225,3 +225,116 @@ input[type="checkbox"] { width: 18px; height: 18px; }
 .button-row.compact button {
   padding-inline: 10px;
 }
+
+
+/* Version 2.1 mobile field layout cleanup */
+@media (max-width: 720px) {
+  .topbar {
+    left: 8px;
+    right: 8px;
+    top: max(8px, env(safe-area-inset-top));
+    padding: 8px 10px;
+    border-radius: 14px;
+  }
+
+  .topbar h1 {
+    font-size: 0.95rem;
+  }
+
+  .eyebrow {
+    font-size: 0.62rem;
+  }
+
+  .menu-btn {
+    padding: 8px 9px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .status-card {
+    left: 8px;
+    right: 8px;
+    top: calc(max(8px, env(safe-area-inset-top)) + 60px);
+    padding: 8px;
+    border-radius: 14px;
+  }
+
+  .status-main {
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+
+  .badge {
+    min-height: 22px;
+    padding: 3px 7px;
+    font-size: 0.64rem;
+  }
+
+  .status-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .status-grid div {
+    padding: 6px;
+    border-radius: 9px;
+  }
+
+  .status-grid span {
+    font-size: 0.64rem;
+  }
+
+  .status-grid strong {
+    font-size: 0.72rem;
+  }
+
+  .button-row {
+    gap: 5px;
+    margin-top: 7px;
+  }
+
+  .button-row button {
+    padding: 8px 9px;
+    font-size: 0.78rem;
+  }
+
+  .drawer {
+    left: 8px;
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    max-height: 46vh;
+    border-radius: 18px;
+  }
+
+  .drawer-section {
+    padding: 11px;
+  }
+
+  .drawer-section.warning {
+    display: none;
+  }
+
+  .drawer-section h2 {
+    font-size: 0.95rem;
+    margin-bottom: 7px;
+  }
+
+  .drawer-section p,
+  .drawer-section li,
+  .muted {
+    font-size: 0.8rem;
+  }
+
+  .search {
+    padding: 9px 10px;
+    font-size: 0.86rem;
+  }
+
+  .leaflet-bottom.leaflet-right {
+    bottom: 8px;
+  }
+
+  .leaflet-bottom.leaflet-left {
+    bottom: 8px;
+  }
+}

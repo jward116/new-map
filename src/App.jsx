@@ -193,7 +193,7 @@ export default function App() {
   const [tracking, setTracking] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [query, setQuery] = useState('');
-  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [placeDraft, setPlaceDraft] = useState({ name: '', type: 'Field Point', phone: '', notes: '' });
   const [layerVisibility, setLayerVisibility] = useState({ boundary: true, stateLine: true, places: true, accuracy: true });
 
@@ -484,6 +484,34 @@ export default function App() {
     });
   }
 
+  async function copyCoordinates() {
+    const pt = activePoint;
+    if (!pt) {
+      setLocationError('Start GPS or tap the map first.');
+      return;
+    }
+
+    const text = `${formatCoord(pt.lat)}, ${formatCoord(pt.lng)}`;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setLocationError(`Copied coordinates: ${text}`);
+    } catch {
+      setLocationError(`Coordinates: ${text}`);
+    }
+  }
+
+  function openGoogleMaps() {
+    const pt = activePoint;
+    if (!pt) {
+      setLocationError('Start GPS or tap the map first.');
+      return;
+    }
+
+    const url = `https://www.google.com/maps?q=${pt.lat},${pt.lng}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -512,6 +540,8 @@ export default function App() {
           {!tracking ? <button className="primary" onClick={startTracking}>Start location tracking</button> : <button className="danger" onClick={stopTracking}>Stop tracking</button>}
           <button onClick={recenter} disabled={!location}>Re-center</button>
           <button onClick={() => setSelectedPoint(null)} disabled={!selectedPoint}>Use GPS point</button>
+          <button onClick={copyCoordinates} disabled={!activePoint}>Copy GPS</button>
+          <button onClick={openGoogleMaps} disabled={!activePoint}>Open Maps</button>
         </div>
         {dataWarning && <p className="error-text">{dataWarning}</p>}
         {locationError && <p className="error-text">{locationError}</p>}
