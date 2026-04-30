@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Iowa Tribe Police Department",
+    "type": "Tribal Law Enforcement",
+    "emergency": "911",
+    "phone": "785-595-6614",
+    "email": "police@iowatribepd.org",
+    "address": "3313 Thrasher Rd, White Cloud, KS 66094",
+    "website": "https://iowatribeofkansasandnebraska.com/iowa-tribe-police-department/",
+    "notes": "ITKN Police public contact. Use 911 for emergencies."
+  },
+  {
+    "name": "Doniphan County Sheriff's Office",
+    "type": "County Law Enforcement",
+    "emergency": "911",
+    "phone": "785-985-3711",
+    "email": "sheriff@doniphanso.org",
+    "address": "219 S Main St, Troy, KS 66087",
+    "website": "https://www.doniphanso.com/about-us/contact-us/",
+    "notes": "Official Doniphan County Sheriff's Office public contact."
+  },
+  {
+    "name": "Brown County Sheriff's Office",
+    "type": "County Law Enforcement",
+    "emergency": "911",
+    "phone": "785-742-7125",
+    "email": "",
+    "address": "709 Utah, Hiawatha, KS 66434",
+    "website": "https://www.brownso.org/contact-us/",
+    "notes": "Official Brown County Sheriff's Office public contact."
+  },
+  {
+    "name": "Richardson County Sheriff's Office",
+    "type": "County Law Enforcement",
+    "emergency": "911",
+    "phone": "402-245-2479",
+    "email": "sheriff@richardsoncountyne.gov",
+    "address": "65086 706 Trail, Falls City, NE 68355",
+    "website": "https://www.richardsoncountysheriffsoffices.com/contact",
+    "notes": "Richardson County dispatch/public contact."
+  }
+]
