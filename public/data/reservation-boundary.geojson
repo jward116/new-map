@@ -2,7 +2,7 @@
   "type": "FeatureCollection",
   "name": "Iowa Reservation boundary from public AIANNH GIS service",
   "source": "USFS/USDA ArcGIS REST service using Census TIGER/Line AIANNH data",
-  "downloadedAt": "2026-04-30T19:46:33.804Z",
+  "downloadedAt": "2026-04-30T20:14:27.914Z",
   "features": [
     {
       "type": "Feature",
