@@ -548,6 +548,158 @@ export default function App() {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
+  function milesBetween(a, b) {
+    if (!a || !b) return null;
+
+    const R = 3958.8;
+    const lat1 = a.lat * Math.PI / 180;
+    const lat2 = b.lat * Math.PI / 180;
+    const dLat = (b.lat - a.lat) * Math.PI / 180;
+    const dLng = (b.lng - a.lng) * Math.PI / 180;
+
+    const h =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1) * Math.cos(lat2) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+
+    return 2 * R * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  }
+
+  function getEstimatedState(pt) {
+    if (!pt) return 'Unknown';
+    return pt.lat >= STATE_LINE_LAT_APPROX ? 'Nebraska' : 'Kansas';
+  }
+
+  function getEstimatedCounty(pt) {
+    if (!pt) return 'Unknown';
+
+    const state = getEstimatedState(pt);
+
+    if (state === 'Nebraska') {
+      return 'Richardson County';
+    }
+
+    // Approximate public-reference county split for the White Cloud / Hiawatha area.
+    // This is a field estimate only. Parcel buttons still open official county systems.
+    if (pt.lng <= -95.52) {
+      return 'Brown County';
+    }
+
+    return 'Doniphan County';
+  }
+
+  function getPlacePoint(feature) {
+    if (!feature || !feature.geometry) return null;
+
+    if (feature.geometry.type === 'Point' && Array.isArray(feature.geometry.coordinates)) {
+      const [lng, lat] = feature.geometry.coordinates;
+      if (typeof lat === 'number' && typeof lng === 'number') {
+        return { lat, lng };
+      }
+    }
+
+    return null;
+  }
+
+  function getNearestKnownPlace(pt) {
+    if (!pt || !places?.features?.length) return null;
+
+    let best = null;
+
+    for (const feature of places.features) {
+      const point = getPlacePoint(feature);
+      if (!point) continue;
+
+      const distance = milesBetween(pt, point);
+      if (distance == null) continue;
+
+      if (!best || distance < best.distanceMiles) {
+        best = {
+          feature,
+          point,
+          distanceMiles: distance
+        };
+      }
+    }
+
+    return best;
+  }
+
+  function getParcelSourceForCounty(county) {
+    if (!county || !parcelSources?.length) return null;
+
+    const countyKey = county.toLowerCase().replace(' county', '');
+
+    return parcelSources.find((source) => {
+      const combined = `${source.county ?? ''} ${source.name ?? ''} ${source.label ?? ''} ${source.state ?? ''}`.toLowerCase();
+      return combined.includes(countyKey);
+    }) ?? null;
+  }
+
+  function getFieldInfo() {
+    const pt = activePoint;
+    if (!pt) return null;
+
+    const state = getEstimatedState(pt);
+    const county = getEstimatedCounty(pt);
+    const nearest = getNearestKnownPlace(pt);
+    const parcelSource = getParcelSourceForCounty(county);
+
+    return {
+      point: pt,
+      state,
+      county,
+      nearest,
+      parcelSource,
+      accuracy: location?.accuracy ?? null
+    };
+  }
+
+  const fieldInfo = getFieldInfo();
+
+  function openSmartParcelSource() {
+    if (!fieldInfo?.parcelSource?.url) {
+      setLocationError('No parcel source found for this estimated county.');
+      return;
+    }
+
+    window.open(fieldInfo.parcelSource.url, '_blank', 'noopener,noreferrer');
+  }
+
+  async function copyFieldSummary() {
+    if (!fieldInfo) {
+      setLocationError('Start GPS or tap the map first.');
+      return;
+    }
+
+    const nearestName = fieldInfo.nearest?.feature?.properties?.name
+      ?? fieldInfo.nearest?.feature?.properties?.Name
+      ?? 'Unknown';
+
+    const nearestDistance = fieldInfo.nearest
+      ? `${fieldInfo.nearest.distanceMiles.toFixed(2)} miles`
+      : 'Unknown';
+
+    const summary = [
+      'ITKN Field Map Summary',
+      `Coordinates: ${formatCoord(fieldInfo.point.lat)}, ${formatCoord(fieldInfo.point.lng)}`,
+      `State estimate: ${fieldInfo.state}`,
+      `County estimate: ${fieldInfo.county}`,
+      `GPS accuracy: ${fieldInfo.accuracy ? `${Math.round(fieldInfo.accuracy)} meters` : 'Unknown'}`,
+      `Nearest known place: ${nearestName}`,
+      `Distance to nearest known place: ${nearestDistance}`,
+      `Parcel source: ${fieldInfo.parcelSource?.county ?? fieldInfo.parcelSource?.name ?? 'Unknown'}`,
+      `Generated: ${new Date().toLocaleString()}`
+    ].join('\n');
+
+    try {
+      await navigator.clipboard.writeText(summary);
+      setLocationError('Copied field summary.');
+    } catch {
+      setLocationError(summary);
+    }
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -587,6 +739,62 @@ export default function App() {
         <div className="drawer-section warning">
           <strong>How this works</strong>
           <p>The app uses public boundary data, your browser GPS, saved field points, and official county parcel links. It is built to work now without waiting on anyone.</p>
+        </div>
+
+
+        <div className="drawer-section field-info-card">
+          <h2>Field status</h2>
+
+          {!fieldInfo ? (
+            <p className="muted">Start GPS tracking or tap the map to generate field information.</p>
+          ) : (
+            <>
+              <div className="field-info-grid">
+                <div>
+                  <span>State estimate</span>
+                  <strong>{fieldInfo.state}</strong>
+                </div>
+                <div>
+                  <span>County estimate</span>
+                  <strong>{fieldInfo.county}</strong>
+                </div>
+                <div>
+                  <span>GPS accuracy</span>
+                  <strong>{fieldInfo.accuracy ? `${Math.round(fieldInfo.accuracy)} m` : 'Unknown'}</strong>
+                </div>
+                <div>
+                  <span>Coordinates</span>
+                  <strong>{formatCoord(fieldInfo.point.lat)}, {formatCoord(fieldInfo.point.lng)}</strong>
+                </div>
+              </div>
+
+              <div className="nearest-card">
+                <span>Nearest known public place</span>
+                <strong>
+                  {fieldInfo.nearest?.feature?.properties?.name
+                    ?? fieldInfo.nearest?.feature?.properties?.Name
+                    ?? 'Unknown'}
+                </strong>
+                <small>
+                  {fieldInfo.nearest
+                    ? `${fieldInfo.nearest.distanceMiles.toFixed(2)} miles away`
+                    : 'No public place points loaded'}
+                </small>
+              </div>
+
+              <div className="parcel-card">
+                <span>Suggested parcel source</span>
+                <strong>{fieldInfo.parcelSource?.county ?? fieldInfo.parcelSource?.name ?? 'Unknown'}</strong>
+              </div>
+
+              <div className="button-row field-actions">
+                <button type="button" onClick={copyFieldSummary}>Copy Field Summary</button>
+                <button type="button" onClick={openSmartParcelSource} disabled={!fieldInfo.parcelSource?.url}>
+                  Open Parcel Source
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="drawer-section">
