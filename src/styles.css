@@ -338,3 +338,70 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     bottom: 8px;
   }
 }
+
+
+/* Version 2.2 professional layer controls */
+.layer-subtitle {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(226, 232, 240, 0.7);
+  font-weight: 800;
+}
+
+.basemap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.basemap {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.78);
+  color: #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 8px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.basemap.active {
+  border-color: rgba(34, 197, 94, 0.95);
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.95), rgba(15, 118, 110, 0.95));
+  color: white;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.16);
+}
+
+.drawer-section label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 0;
+}
+
+.drawer-section input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: #22c55e;
+}
+
+@media (max-width: 720px) {
+  .basemap-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .basemap {
+    padding: 8px 4px;
+    font-size: 0.67rem;
+    border-radius: 10px;
+  }
+
+  .layer-subtitle {
+    font-size: 0.66rem;
+  }
+}
