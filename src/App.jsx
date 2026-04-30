@@ -548,6 +548,102 @@ export default function App() {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function getPlaceCategory(properties = {}) {
+    const raw = `${properties.type ?? ''} ${properties.category ?? ''} ${properties.name ?? ''}`.toLowerCase();
+
+    if (raw.includes('police') || raw.includes('sheriff') || raw.includes('law enforcement')) return 'law';
+    if (raw.includes('court')) return 'court';
+    if (raw.includes('government') || raw.includes('administration') || raw.includes('tribal')) return 'gov';
+    if (raw.includes('casino')) return 'casino';
+    if (raw.includes('farm') || raw.includes('bee') || raw.includes('agriculture')) return 'farm';
+    if (raw.includes('oil') || raw.includes('tire') || raw.includes('business')) return 'business';
+
+    return 'place';
+  }
+
+  function getPlaceIconConfig(properties = {}) {
+    const category = getPlaceCategory(properties);
+
+    const configs = {
+      law: { icon: '🛡', label: 'Law Enforcement', className: 'marker-law' },
+      court: { icon: '⚖', label: 'Court', className: 'marker-court' },
+      gov: { icon: '🏛', label: 'Government', className: 'marker-gov' },
+      casino: { icon: '🎰', label: 'Casino / Business', className: 'marker-casino' },
+      farm: { icon: '🌾', label: 'Farm / Agriculture', className: 'marker-farm' },
+      business: { icon: '🏢', label: 'Business', className: 'marker-business' },
+      place: { icon: '📍', label: 'Public Place', className: 'marker-place' }
+    };
+
+    return configs[category] ?? configs.place;
+  }
+
+  function makePlaceIcon(properties = {}) {
+    const cfg = getPlaceIconConfig(properties);
+
+    return L.divIcon({
+      className: `pro-marker ${cfg.className}`,
+      html: `<span>${cfg.icon}</span>`,
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+      popupAnchor: [0, -18]
+    });
+  }
+
+  function firstValue(properties = {}, keys = []) {
+    for (const key of keys) {
+      if (properties[key] != null && properties[key] !== '') return properties[key];
+    }
+    return '';
+  }
+
+  function buildPlacePopup(properties = {}) {
+    const name = firstValue(properties, ['name', 'Name', 'title', 'Title']) || 'Public Place';
+    const type = firstValue(properties, ['type', 'Type', 'category', 'Category']) || getPlaceIconConfig(properties).label;
+    const address = firstValue(properties, ['address', 'Address']);
+    const phone = firstValue(properties, ['phone', 'Phone']);
+    const website = firstValue(properties, ['website', 'Website', 'url', 'URL']);
+    const notes = firstValue(properties, ['notes', 'Notes', 'description', 'Description']);
+    const cfg = getPlaceIconConfig(properties);
+
+    return `
+      <div class="place-popup">
+        <div class="place-popup-title">${cfg.icon} ${escapeHtml(name)}</div>
+        <div class="place-popup-type">${escapeHtml(type)}</div>
+        ${address ? `<div class="place-popup-row"><span>Address</span><strong>${escapeHtml(address)}</strong></div>` : ''}
+        ${phone ? `<div class="place-popup-row"><span>Phone</span><strong>${escapeHtml(phone)}</strong></div>` : ''}
+        ${website ? `<div class="place-popup-row"><span>Website</span><strong>${escapeHtml(website)}</strong></div>` : ''}
+        ${notes ? `<div class="place-popup-notes">${escapeHtml(notes)}</div>` : ''}
+      </div>
+    `;
+  }
+
+  useEffect(() => {
+    const layer = layersRef.current.places;
+    if (!layer || !places) return;
+
+    layer.eachLayer((marker) => {
+      const properties = marker.feature?.properties ?? {};
+
+      if (marker.setIcon) {
+        marker.setIcon(makePlaceIcon(properties));
+      }
+
+      if (marker.bindPopup) {
+        marker.bindPopup(buildPlacePopup(properties));
+      }
+    });
+  }, [places, layerVisibility.places]);
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -587,6 +683,25 @@ export default function App() {
         <div className="drawer-section warning">
           <strong>How this works</strong>
           <p>The app uses public boundary data, your browser GPS, saved field points, and official county parcel links. It is built to work now without waiting on anyone.</p>
+        </div>
+
+
+        <div className="drawer-section legend-card">
+          <h2>Map legend</h2>
+
+          <div className="legend-grid">
+            <div><span className="legend-icon marker-law">🛡</span><strong>Law Enforcement</strong></div>
+            <div><span className="legend-icon marker-court">⚖</span><strong>Court</strong></div>
+            <div><span className="legend-icon marker-gov">🏛</span><strong>Government</strong></div>
+            <div><span className="legend-icon marker-business">🏢</span><strong>Business</strong></div>
+            <div><span className="legend-icon marker-farm">🌾</span><strong>Farm / Ag</strong></div>
+            <div><span className="legend-icon marker-place">📍</span><strong>Public Place</strong></div>
+          </div>
+
+          <div className="legend-lines">
+            <div><span className="legend-line boundary"></span> Reservation boundary</div>
+            <div><span className="legend-line state"></span> Kansas / Nebraska line</div>
+          </div>
         </div>
 
         <div className="drawer-section">
