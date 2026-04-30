@@ -8,6 +8,29 @@ const DATA_BASE = import.meta.env.BASE_URL || '/';
 const DEFAULT_CENTER = [39.995, -95.295];
 const DEFAULT_ZOOM = 12;
 const STATE_LINE_LAT_APPROX = 40.0;
+
+const BASEMAPS = {
+  satellite: {
+    label: 'Satellite',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    options: { maxZoom: 20, attribution: 'Tiles &copy; Esri' }
+  },
+  street: {
+    label: 'Street',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    options: { maxZoom: 20, subdomains: 'abcd', attribution: '&copy; OpenStreetMap contributors &copy; CARTO' }
+  },
+  topo: {
+    label: 'Topo',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+    options: { maxZoom: 20, attribution: 'Tiles &copy; Esri' }
+  },
+  dark: {
+    label: 'Dark',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    options: { maxZoom: 20, subdomains: 'abcd', attribution: '&copy; OpenStreetMap contributors &copy; CARTO' }
+  }
+};
 const LOCAL_STORAGE_PLACES_KEY = 'itkn_field_map_saved_places_v1';
 
 // Public AIANNH boundary service. The app also has a build-time script that writes a local copy.
@@ -196,6 +219,7 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [placeDraft, setPlaceDraft] = useState({ name: '', type: 'Field Point', phone: '', notes: '' });
   const [layerVisibility, setLayerVisibility] = useState({ boundary: true, stateLine: true, places: true, accuracy: true });
+  const [selectedBasemap, setSelectedBasemap] = useState('satellite');
 
   const activePoint = selectedPoint || location;
 
@@ -244,11 +268,6 @@ export default function App() {
     const map = L.map(mapElRef.current, { zoomControl: false, preferCanvas: true }).setView(DEFAULT_CENTER, DEFAULT_ZOOM);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
     L.control.scale({ imperial: true, metric: true, position: 'bottomleft' }).addTo(map);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20,
-      subdomains: 'abcd',
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-    }).addTo(map);
 
     map.on('click', (e) => {
       setSelectedPoint({ lat: e.latlng.lat, lng: e.latlng.lng, accuracy: null, source: 'Map click' });
@@ -260,6 +279,23 @@ export default function App() {
       mapRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    if (layersRef.current.baseMap) {
+      layersRef.current.baseMap.remove();
+    }
+
+    const cfg = BASEMAPS[selectedBasemap] || BASEMAPS.satellite;
+    layersRef.current.baseMap = L.tileLayer(cfg.url, {
+      ...cfg.options,
+      zIndex: 1
+    }).addTo(map);
+
+    layersRef.current.baseMap.bringToBack();
+  }, [selectedBasemap]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -555,6 +591,22 @@ export default function App() {
 
         <div className="drawer-section">
           <h2>Layers</h2>
+          <div className="drawer-basemap-safe">
+            <div className="layer-subtitle">Map view</div>
+            <div className="basemap-grid">
+              {Object.entries(BASEMAPS).map(([key, cfg]) => (
+                <button
+                  type="button"
+                  key={key}
+                  className={selectedBasemap === key ? 'basemap active' : 'basemap'}
+                  onClick={() => setSelectedBasemap(key)}
+                >
+                  {cfg.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <label><input type="checkbox" checked={layerVisibility.boundary} onChange={() => toggleLayer('boundary')} /> Reservation boundary</label>
           <label><input type="checkbox" checked={layerVisibility.stateLine} onChange={() => toggleLayer('stateLine')} /> KS / NE state line</label>
           <label><input type="checkbox" checked={layerVisibility.places} onChange={() => toggleLayer('places')} /> Places / saved field points</label>
