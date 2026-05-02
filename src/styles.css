@@ -756,3 +756,49 @@ input[type="checkbox"] { width: 18px; height: 18px; }
 .stacked-actions button {
   width: 100%;
 }
+
+/* Richardson parcel popup note */
+.parcel-popup-note {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+/* Fix parcel popup visibility on dark map popup */
+.leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.96);
+  color: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+}
+
+.leaflet-popup-tip {
+  background: rgba(15, 23, 42, 0.96);
+}
+
+.parcel-popup-title {
+  color: #f8fafc !important;
+}
+
+.parcel-popup-row span {
+  color: rgba(226, 232, 240, 0.68) !important;
+}
+
+.parcel-popup-row strong {
+  color: #ffffff !important;
+  font-size: 0.95rem;
+}
+
+.parcel-popup-note {
+  color: rgba(226, 232, 240, 0.76) !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.28) !important;
+}
+
+.parcel-popup-link {
+  background: #2563eb;
+  color: white !important;
+}
