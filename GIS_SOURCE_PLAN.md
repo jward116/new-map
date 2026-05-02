@@ -311,3 +311,35 @@ Do not use it in the Iowa Tribe field map.
 
 Brown County KS remains unresolved for direct parcel polygon API.
 Continue researching ORKA/KGS/DASC/PORKA or downloadable parcel data.
+
+---
+
+# Brown County KS ORKA Deep Check Result
+
+A deeper check of the Kansas ORKA Extras MapServer found useful support layers, but not a verified Brown County KS ownership parcel polygon layer.
+
+Relevant ORKA layers found:
+- Ag-use polygon layers
+- Flood boundary layers
+- Water feature layers
+- Soils
+- City limits
+- Leaseholds / condos
+- County boundaries
+- Annotation layers such as parcel numbers and parcel dimensions
+
+Important finding:
+The parcel-related ORKA layers found for Brown/other counties are annotation/support layers, not confirmed parcel ownership polygon layers with owner/address fields.
+
+Decision:
+Brown County KS direct parcel overlay remains NOT FEASIBLE AS REQUESTED from verified free public API at this time.
+
+Brown County app plan:
+- Add "Open Brown ORKA" button
+- Add "Open Brown Parcel Search" button
+- Do not show Brown parcel overlay until a real Brown KS parcel polygon API, export, or paid dataset is available
+
+Possible future options:
+- Inspect ORKA browser Network traffic after accepting the ORKA disclaimer
+- Request parcel GIS export through ORKA/PORKA/KGS/DASC
+- Use a paid parcel dataset if the department needs direct Brown overlay in-app
