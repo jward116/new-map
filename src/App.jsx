@@ -719,7 +719,6 @@ export default function App() {
   function buildRichardsonPopup(properties = {}) {
     const pid = cleanParcelValue(properties.PID);
     const acres = cleanParcelValue(properties.acres);
-    const reportUrl = pid !== 'Not listed' ? buildRichardsonReportUrl(pid) : '';
 
     return `
       <div class="parcel-popup">
@@ -732,11 +731,9 @@ export default function App() {
           <span>Acres</span>
           <strong>${acres}</strong>
         </div>
-        ${
-          reportUrl
-            ? `<a class="parcel-popup-link" href="${reportUrl}" target="_blank" rel="noopener noreferrer">Open assessor report</a>`
-            : ''
-        }
+        <div class="parcel-popup-note">
+          Owner details are not exposed in the GIS parcel layer. Use the PID for assessor lookup.
+        </div>
       </div>
     `;
   }
@@ -766,7 +763,7 @@ export default function App() {
 
     const url = `https://mapserver01.gworks.com/arcgis/rest/services/Richardson_County_NE_Assessor/MapServer/98/query?${params.toString()}`;
 
-    setLocationError('Loading Richardson parcels for current map view...');
+    setLocationError('Loading Richardson parcels only inside the current map view...');
 
     const response = await fetch(url);
 
@@ -825,6 +822,16 @@ export default function App() {
     }, 900);
   }
 
+  function clearRichardsonParcels() {
+    if (layersRef.current.richardsonParcels) {
+      layersRef.current.richardsonParcels.remove();
+      layersRef.current.richardsonParcels = null;
+      setLocationError('Richardson parcel layer cleared.');
+    } else {
+      setLocationError('No Richardson parcel layer is currently loaded.');
+    }
+  }
+
   async function toggleRichardsonParcels() {
     const map = mapRef.current;
     if (!map) return;
@@ -843,6 +850,91 @@ export default function App() {
       setLocationError(`Could not load Richardson parcels: ${error.message}`);
     }
   }
+
+
+  function ringAreaSqMeters(coords = []) {
+    if (!coords.length) return 0;
+
+    const radius = 6378137;
+    let area = 0;
+
+    for (let i = 0; i < coords.length; i += 1) {
+      const [lon1, lat1] = coords[i];
+      const [lon2, lat2] = coords[(i + 1) % coords.length];
+
+      const lon1Rad = lon1 * Math.PI / 180;
+      const lon2Rad = lon2 * Math.PI / 180;
+      const lat1Rad = lat1 * Math.PI / 180;
+      const lat2Rad = lat2 * Math.PI / 180;
+
+      area += (lon2Rad - lon1Rad) * (2 + Math.sin(lat1Rad) + Math.sin(lat2Rad));
+    }
+
+    return Math.abs(area * radius * radius / 2);
+  }
+
+  function polygonAreaAcres(rings = []) {
+    if (!rings.length) return 0;
+
+    const outer = ringAreaSqMeters(rings[0]);
+    const holes = rings.slice(1).reduce((sum, ring) => sum + ringAreaSqMeters(ring), 0);
+
+    return (outer - holes) * 0.000247105;
+  }
+
+  function geometryAreaAcres(geometry) {
+    if (!geometry) return 0;
+
+    if (geometry.type === 'Polygon') {
+      return polygonAreaAcres(geometry.coordinates);
+    }
+
+    if (geometry.type === 'MultiPolygon') {
+      return geometry.coordinates.reduce((sum, polygon) => sum + polygonAreaAcres(polygon), 0);
+    }
+
+    return 0;
+  }
+
+  function buildBoundaryPopup(feature = {}) {
+    const props = feature.properties ?? {};
+    const name =
+      props.name ??
+      props.NAME ??
+      props.NAMELSAD ??
+      props.label ??
+      'Loaded reservation / tribal boundary';
+
+    const acres = geometryAreaAcres(feature.geometry);
+
+    return `
+      <div class="parcel-popup">
+        <div class="parcel-popup-title">Reservation / Tribal Boundary</div>
+        <div class="parcel-popup-row">
+          <span>Name</span>
+          <strong>${String(name)}</strong>
+        </div>
+        <div class="parcel-popup-row">
+          <span>Estimated acres from loaded map geometry</span>
+          <strong>${acres ? acres.toLocaleString(undefined, { maximumFractionDigits: 1 }) : 'Not available'}</strong>
+        </div>
+        <div class="parcel-popup-note">
+          Acreage is calculated from the loaded public boundary geometry. It should be treated as a field reference estimate, not a legal survey.
+        </div>
+      </div>
+    `;
+  }
+
+  useEffect(() => {
+    const boundaryLayer = layersRef.current.boundary;
+    if (!boundaryLayer || !boundary) return;
+
+    boundaryLayer.eachLayer((layer) => {
+      if (layer.feature && layer.bindPopup) {
+        layer.bindPopup(buildBoundaryPopup(layer.feature));
+      }
+    });
+  }, [boundary, layerVisibility.boundary]);
 
   return (
     <div className="app-shell">
@@ -953,11 +1045,11 @@ export default function App() {
                   </div>
                 ) : county.id === 'richardson-ne' ? (
                   <div className="button-row parcel-actions stacked-actions">
-                    <button type="button" onClick={zoomAndLoadRichardsonParcels}>
-                      Zoom + Load Richardson Parcels
+                    <button type="button" onClick={loadRichardsonParcelsForCurrentView}>
+                      Load Richardson Parcels in Current View
                     </button>
-                    <button type="button" onClick={toggleRichardsonParcels}>
-                      Toggle Richardson Overlay
+                    <button type="button" onClick={clearRichardsonParcels}>
+                      Clear Richardson Parcels
                     </button>
                   </div>
                 ) : (
