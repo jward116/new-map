@@ -210,6 +210,7 @@ export default function App() {
   const [places, setPlaces] = useState(null);
   const [savedPlaces, setSavedPlaces] = useState(() => loadSavedPlaces());
   const [parcelSources, setParcelSources] = useState([]);
+  const [countyParcelSources, setCountyParcelSources] = useState([]);
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState('');
   const [dataWarning, setDataWarning] = useState('');
@@ -693,6 +694,18 @@ export default function App() {
     .map(([category]) => `hide-${category}`)
     .join(' ');
 
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}data/county-parcel-sources.json`)
+      .then((res) => res.json())
+      .then((data) => setCountyParcelSources(data.counties ?? []))
+      .catch(() => setCountyParcelSources([]));
+  }, []);
+
+  function openExternalParcelLink(url) {
+    if (!url) return;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -750,6 +763,65 @@ export default function App() {
           <div className="legend-lines">
             <div><span className="legend-line boundary"></span> Reservation boundary</div>
             <div><span className="legend-line state"></span> Kansas / Nebraska line</div>
+          </div>
+        </div>
+
+
+        <div className="drawer-section parcel-source-card">
+          <h2>County parcel sources</h2>
+          <p className="muted">
+            Verified parcel sources for the field map. Brown County remains external-only until a verified public parcel polygon API is found.
+          </p>
+
+          <div className="parcel-source-list">
+            {countyParcelSources.map((county) => (
+              <div className={`parcel-source-item status-${county.status}`} key={county.id}>
+                <div className="parcel-source-header">
+                  <div>
+                    <strong>{county.name}, {county.state}</strong>
+                    <span>{county.label}</span>
+                  </div>
+                  <em>
+                    {county.status === 'direct_full'
+                      ? 'Full'
+                      : county.status === 'direct_partial'
+                        ? 'Partial'
+                        : 'External'}
+                  </em>
+                </div>
+
+                <p>{county.notes}</p>
+
+                {county.status === 'direct_full' ? (
+                  <div className="parcel-capability good">
+                    Parcel overlay and owner popup planned.
+                  </div>
+                ) : null}
+
+                {county.status === 'direct_partial' ? (
+                  <div className="parcel-capability partial">
+                    Parcel overlay planned. Owner details open through assessor report.
+                  </div>
+                ) : null}
+
+                {county.status === 'external_only' ? (
+                  <div className="button-row parcel-actions">
+                    <button type="button" onClick={() => openExternalParcelLink(county.officialViewerUrl)}>
+                      Open ORKA
+                    </button>
+                    <button type="button" onClick={() => openExternalParcelLink(county.parcelSearchUrl)}>
+                      Parcel Search
+                    </button>
+                  </div>
+                ) : (
+                  <div className="button-row parcel-actions">
+                    <button type="button" disabled>
+                      Overlay Coming Next
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
