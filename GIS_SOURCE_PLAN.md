@@ -343,3 +343,35 @@ Possible future options:
 - Inspect ORKA browser Network traffic after accepting the ORKA disclaimer
 - Request parcel GIS export through ORKA/PORKA/KGS/DASC
 - Use a paid parcel dataset if the department needs direct Brown overlay in-app
+
+---
+
+# Doniphan Direct ArcGIS Query Result
+
+Direct ArcGIS service tested:
+
+https://services8.integritygis.com/arcgis/rest/services/KS/Doniphan_Appraiser_Data/MapServer/11
+
+Result:
+- Metadata request returned error code 499: Token Required
+- Query request returned error code 499: Token Required
+
+Decision:
+Doniphan County KS direct parcel overlay is not publicly queryable from the app at this time.
+
+What is still public:
+- Doniphan Geocortex layer metadata
+- Parcel field list
+- Data-link list
+- Report list
+- Official public Integrity GIS viewer
+
+Doniphan app plan:
+- Do not build fake in-app Doniphan parcel overlay
+- Add button to official Doniphan Integrity GIS viewer
+- Add note that direct parcel overlay requires token/auth or another data source
+
+Future options:
+- Obtain permission/token from Doniphan/Integrity
+- Use official exported parcel data if provided
+- Use paid parcel dataset if needed
