@@ -234,3 +234,60 @@ If a county does not have a verified public parcel layer, the app must say:
 Do not guess parcel boundaries.
 Do not use outdated screenshots as parcel data.
 Do not claim owner info unless it comes from a verified source.
+
+---
+
+# Test Results - Codespaces Public Endpoint Check
+
+## Doniphan County KS
+
+Confirmed public Geocortex parcel layer fields:
+- PID
+- TaxID
+- QuickRefID
+- PartyName
+- AllOwners
+- SitusAddress
+- LegalDescription
+- CalcAcres
+- FinalTotal
+- Acres
+- GIS_ACRES
+
+Decision:
+Doniphan is confirmed for full parcel integration.
+
+## Richardson County NE
+
+Confirmed public ArcGIS parcel fields:
+- OBJECTID
+- acres
+- PID
+- GlobalID
+
+Sample query returned:
+- PID: 740000209
+- acres: 80.90994
+
+Decision:
+Richardson is confirmed for parcel boundary + PID/acres integration.
+Owner details should be opened through gWorks/assessor report lookup by PID.
+
+## Brown County KS
+
+ORKA Extras returned parcel-related support/annotation layers:
+- Address Points
+- Annotations
+- BB- Acreage
+- BB- Parcel Dimensions
+- BB- Parcel Numbers
+- Parcel Number 1200
+- Parcel Number 2400
+- Parcel Number 4800
+- CR- Parcel Numbers
+- JW- Parcel Annotation
+- NM- Parcel Annotation
+
+Decision:
+Brown still does not have a confirmed clean public parcel polygon layer with owner fields.
+Continue deeper ORKA hidden-service research before coding Brown overlay.
