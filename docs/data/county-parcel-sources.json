@@ -1,0 +1,53 @@
+{
+  "counties": [
+    {
+      "id": "doniphan-ks",
+      "name": "Doniphan County",
+      "state": "KS",
+      "status": "external_only",
+      "label": "Doniphan Official Integrity GIS",
+      "sourceType": "external_links",
+      "supportsOwnerPopup": false,
+      "supportsParcelOverlay": false,
+      "notes": "Direct parcel query was tested and returned Token Required. Use the official Integrity GIS viewer unless a token, export, or alternate public source is obtained.",
+      "officialViewerUrl": "https://doniphan.integritygis.com/",
+      "officialViewerLabel": "Open Integrity GIS",
+      "parcelSearchUrl": "https://dpcountyks.com/dept/county-appraiser/gis-mapping/",
+      "parcelSearchLabel": "County GIS Page"
+    },
+    {
+      "id": "richardson-ne",
+      "name": "Richardson County",
+      "state": "NE",
+      "status": "direct_partial",
+      "label": "Richardson Parcels",
+      "sourceType": "arcgis_rest",
+      "sourceUrl": "https://mapserver01.gworks.com/arcgis/rest/services/Richardson_County_NE_Assessor/MapServer/98",
+      "layerId": 98,
+      "geometry": "Polygon",
+      "supportsOwnerPopup": false,
+      "supportsParcelOverlay": true,
+      "fields": {
+        "parcelId": "PID",
+        "acres": "acres"
+      },
+      "reportUrlTemplate": "https://report.gworks.com/report.ashx?county=richardson&id={PID}&subs=true&type=assessor",
+      "notes": "Verified in-app parcel overlay. Click parcels to show PID and acres. Owner details are not exposed in the GIS layer."
+    },
+    {
+      "id": "brown-ks",
+      "name": "Brown County",
+      "state": "KS",
+      "status": "external_only",
+      "label": "Brown County Official Viewers",
+      "sourceType": "external_links",
+      "supportsOwnerPopup": false,
+      "supportsParcelOverlay": false,
+      "officialViewerUrl": "https://www.kansasgis.org/orka/intro.cfm?countyName=brown",
+      "parcelSearchUrl": "https://brown.kansasgov.com/parcel/",
+      "notes": "No verified free public Brown County KS ownership parcel polygon API found yet. Use ORKA and KansasGov parcel search until a valid parcel source is found.",
+      "officialViewerLabel": "Open Brown ORKA",
+      "parcelSearchLabel": "Brown Parcel Search"
+    }
+  ]
+}
