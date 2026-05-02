@@ -291,3 +291,23 @@ ORKA Extras returned parcel-related support/annotation layers:
 Decision:
 Brown still does not have a confirmed clean public parcel polygon layer with owner fields.
 Continue deeper ORKA hidden-service research before coding Brown overlay.
+
+---
+
+# Brown County KS False Lead Rejected
+
+A public ArcGIS FeatureServer named "Parcels" with layer "BROWN-COUNTY" was tested:
+
+https://services3.arcgis.com/3Zd7D4Itq19bMuuV/ArcGIS/rest/services/Parcels/FeatureServer/0
+
+Result:
+- It returned parcel-style fields such as PARCELNUMB, LASTFIRST, ADDRESS, ACREAGE.
+- However, the GeoJSON sample returned coordinates around longitude -83.898 and latitude 38.860.
+- Brown County, Kansas should be around longitude -95, not -83.
+
+Decision:
+This service is NOT Brown County, Kansas.
+Do not use it in the Iowa Tribe field map.
+
+Brown County KS remains unresolved for direct parcel polygon API.
+Continue researching ORKA/KGS/DASC/PORKA or downloadable parcel data.
