@@ -702,3 +702,57 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     font-size: 0.72rem;
   }
 }
+
+
+/* Richardson parcel popup */
+.parcel-popup {
+  min-width: 220px;
+}
+
+.parcel-popup-title {
+  font-weight: 900;
+  font-size: 1rem;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.parcel-popup-row {
+  margin-top: 7px;
+}
+
+.parcel-popup-row span {
+  display: block;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  font-weight: 800;
+}
+
+.parcel-popup-row strong {
+  display: block;
+  color: #111827;
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+
+.parcel-popup-link {
+  display: block;
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #0f766e;
+  color: white !important;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* Parcel action stacked buttons */
+.stacked-actions {
+  flex-direction: column;
+}
+
+.stacked-actions button {
+  width: 100%;
+}

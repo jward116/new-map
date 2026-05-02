@@ -706,6 +706,144 @@ export default function App() {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
+  function buildRichardsonReportUrl(pid) {
+    return `https://report.gworks.com/report.ashx?county=richardson&id=${encodeURIComponent(pid)}&subs=true&type=assessor`;
+  }
+
+  function cleanParcelValue(value) {
+    if (value === null || value === undefined) return 'Not listed';
+    const text = String(value).trim();
+    return text || 'Not listed';
+  }
+
+  function buildRichardsonPopup(properties = {}) {
+    const pid = cleanParcelValue(properties.PID);
+    const acres = cleanParcelValue(properties.acres);
+    const reportUrl = pid !== 'Not listed' ? buildRichardsonReportUrl(pid) : '';
+
+    return `
+      <div class="parcel-popup">
+        <div class="parcel-popup-title">Richardson County Parcel</div>
+        <div class="parcel-popup-row">
+          <span>Parcel ID</span>
+          <strong>${pid}</strong>
+        </div>
+        <div class="parcel-popup-row">
+          <span>Acres</span>
+          <strong>${acres}</strong>
+        </div>
+        ${
+          reportUrl
+            ? `<a class="parcel-popup-link" href="${reportUrl}" target="_blank" rel="noopener noreferrer">Open assessor report</a>`
+            : ''
+        }
+      </div>
+    `;
+  }
+
+  async function loadRichardsonParcelsForCurrentView() {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const bounds = map.getBounds();
+    const west = bounds.getWest();
+    const south = bounds.getSouth();
+    const east = bounds.getEast();
+    const north = bounds.getNorth();
+
+    const params = new URLSearchParams({
+      where: '1=1',
+      outFields: 'OBJECTID,PID,acres',
+      returnGeometry: 'true',
+      f: 'geojson',
+      outSR: '4326',
+      inSR: '4326',
+      geometryType: 'esriGeometryEnvelope',
+      spatialRel: 'esriSpatialRelIntersects',
+      geometry: `${west},${south},${east},${north}`,
+      resultRecordCount: '500'
+    });
+
+    const url = `https://mapserver01.gworks.com/arcgis/rest/services/Richardson_County_NE_Assessor/MapServer/98/query?${params.toString()}`;
+
+    setLocationError('Loading Richardson parcels for current map view...');
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Richardson parcel request failed: ${response.status}`);
+    }
+
+    const geojson = await response.json();
+
+    if (layersRef.current.richardsonParcels) {
+      layersRef.current.richardsonParcels.remove();
+      layersRef.current.richardsonParcels = null;
+    }
+
+    const layer = L.geoJSON(geojson, {
+      style: {
+        color: '#38bdf8',
+        weight: 1.5,
+        fillColor: '#0ea5e9',
+        fillOpacity: 0.08
+      },
+      onEachFeature: (feature, parcelLayer) => {
+        parcelLayer.bindPopup(buildRichardsonPopup(feature.properties ?? {}));
+      }
+    }).addTo(map);
+
+    layersRef.current.richardsonParcels = layer;
+
+    const count = geojson.features?.length ?? 0;
+    setLocationError(`Loaded ${count} Richardson parcel(s) in this map view.`);
+  }
+
+  function zoomToRichardsonCounty() {
+    const map = mapRef.current;
+    if (!map) return;
+
+    map.fitBounds([
+      [39.98, -96.03],
+      [40.27, -95.30]
+    ]);
+  }
+
+  function zoomAndLoadRichardsonParcels() {
+    const map = mapRef.current;
+    if (!map) return;
+
+    zoomToRichardsonCounty();
+
+    setLocationError('Zooming to Richardson County. Loading parcels...');
+
+    window.setTimeout(() => {
+      loadRichardsonParcelsForCurrentView().catch((error) => {
+        console.error(error);
+        setLocationError(`Could not load Richardson parcels: ${error.message}`);
+      });
+    }, 900);
+  }
+
+  async function toggleRichardsonParcels() {
+    const map = mapRef.current;
+    if (!map) return;
+
+    if (layersRef.current.richardsonParcels) {
+      layersRef.current.richardsonParcels.remove();
+      layersRef.current.richardsonParcels = null;
+      setLocationError('Richardson parcel layer turned off.');
+      return;
+    }
+
+    try {
+      await loadRichardsonParcelsForCurrentView();
+    } catch (error) {
+      console.error(error);
+      setLocationError(`Could not load Richardson parcels: ${error.message}`);
+    }
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -813,10 +951,19 @@ export default function App() {
                       Parcel Search
                     </button>
                   </div>
+                ) : county.id === 'richardson-ne' ? (
+                  <div className="button-row parcel-actions stacked-actions">
+                    <button type="button" onClick={zoomAndLoadRichardsonParcels}>
+                      Zoom + Load Richardson Parcels
+                    </button>
+                    <button type="button" onClick={toggleRichardsonParcels}>
+                      Toggle Richardson Overlay
+                    </button>
+                  </div>
                 ) : (
                   <div className="button-row parcel-actions">
                     <button type="button" disabled>
-                      Overlay Coming Next
+                      Doniphan Overlay Coming Next
                     </button>
                   </div>
                 )}
