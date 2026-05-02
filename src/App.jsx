@@ -782,8 +782,8 @@ export default function App() {
       style: {
         color: '#38bdf8',
         weight: 1.5,
-        fillColor: '#0ea5e9',
-        fillOpacity: 0.08
+        opacity: 0.95,
+        fill: false
       },
       onEachFeature: (feature, parcelLayer) => {
         parcelLayer.bindPopup(buildRichardsonPopup(feature.properties ?? {}));
@@ -791,6 +791,16 @@ export default function App() {
     }).addTo(map);
 
     layersRef.current.richardsonParcels = layer;
+
+    if (layersRef.current.boundary?.bringToFront) {
+      layersRef.current.boundary.bringToFront();
+    }
+
+    if (layersRef.current.places?.eachLayer) {
+      layersRef.current.places.eachLayer((placeLayer) => {
+        if (placeLayer.bringToFront) placeLayer.bringToFront();
+      });
+    }
 
     const count = geojson.features?.length ?? 0;
     setLocationError(`Loaded ${count} Richardson parcel(s) in this map view.`);
