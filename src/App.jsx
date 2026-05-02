@@ -936,6 +936,41 @@ export default function App() {
     });
   }, [boundary, layerVisibility.boundary]);
 
+
+  function buildBoundaryReferencePopup(feature = {}) {
+    const props = feature.properties ?? {};
+    const name =
+      props.name ??
+      props.NAME ??
+      props.NAMELSAD ??
+      props.label ??
+      'Loaded tribal / reservation boundary';
+
+    return `
+      <div class="parcel-popup">
+        <div class="parcel-popup-title">Tribal / Reservation Boundary</div>
+        <div class="parcel-popup-row">
+          <span>Name</span>
+          <strong>${String(name)}</strong>
+        </div>
+        <div class="parcel-popup-note">
+          This is the overall loaded boundary outline, not an individual parcel. Parcel acreage only appears on verified county parcel layers such as Richardson parcels.
+        </div>
+      </div>
+    `;
+  }
+
+  useEffect(() => {
+    const boundaryLayer = layersRef.current.boundary;
+    if (!boundaryLayer || !boundary) return;
+
+    boundaryLayer.eachLayer((layer) => {
+      if (layer.feature && layer.bindPopup) {
+        layer.bindPopup(buildBoundaryReferencePopup(layer.feature));
+      }
+    });
+  }, [boundary, layerVisibility.boundary]);
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
