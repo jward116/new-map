@@ -4,30 +4,16 @@
       "id": "doniphan-ks",
       "name": "Doniphan County",
       "state": "KS",
-      "status": "direct_full",
-      "label": "Doniphan Parcels",
-      "sourceType": "geocortex",
-      "sourceUrl": "https://dadegis.integritygis.com/Geocortex/Essentials/REST/sites/Doniphan_County_KS/map/mapservices/3/layers/11",
-      "layerId": 11,
-      "geometry": "Polygon",
-      "supportsOwnerPopup": true,
-      "supportsParcelOverlay": true,
-      "fields": {
-        "parcelId": "PID",
-        "quickRef": "QuickRefID",
-        "taxId": "TaxID",
-        "owner": "PartyName",
-        "allOwners": "AllOwners",
-        "mailingAddress": "PartyAddress",
-        "siteAddress": "SitusAddress",
-        "legalDescription": "LegalDescription",
-        "acres": "CalcAcres",
-        "landValue": "FinalLand",
-        "buildingValue": "FinalBuild",
-        "totalValue": "FinalTotal",
-        "taxes": "TAX"
-      },
-      "notes": "Verified public Geocortex parcel layer with owner/address/value fields."
+      "status": "external_only",
+      "label": "Doniphan Official Integrity GIS",
+      "sourceType": "external_links",
+      "supportsOwnerPopup": false,
+      "supportsParcelOverlay": false,
+      "notes": "Direct parcel query was tested and returned Token Required. Use the official Integrity GIS viewer unless a token, export, or alternate public source is obtained.",
+      "officialViewerUrl": "https://doniphan.integritygis.com/",
+      "officialViewerLabel": "Open Integrity GIS",
+      "parcelSearchUrl": "https://dpcountyks.com/dept/county-appraiser/gis-mapping/",
+      "parcelSearchLabel": "County GIS Page"
     },
     {
       "id": "richardson-ne",
@@ -46,7 +32,7 @@
         "acres": "acres"
       },
       "reportUrlTemplate": "https://report.gworks.com/report.ashx?county=richardson&id={PID}&subs=true&type=assessor",
-      "notes": "Verified parcel geometry with PID/acres. Owner details should open through gWorks assessor report by PID."
+      "notes": "Verified in-app parcel overlay. Click parcels to show PID and acres. Owner details are not exposed in the GIS layer."
     },
     {
       "id": "brown-ks",
@@ -59,7 +45,9 @@
       "supportsParcelOverlay": false,
       "officialViewerUrl": "https://www.kansasgis.org/orka/intro.cfm?countyName=brown",
       "parcelSearchUrl": "https://brown.kansasgov.com/parcel/",
-      "notes": "No verified free public Brown County KS ownership parcel polygon API found yet. Use ORKA and KansasGov parcel search until a valid parcel source is found."
+      "notes": "No verified free public Brown County KS ownership parcel polygon API found yet. Use ORKA and KansasGov parcel search until a valid parcel source is found.",
+      "officialViewerLabel": "Open Brown ORKA",
+      "parcelSearchLabel": "Brown Parcel Search"
     }
   ]
 }

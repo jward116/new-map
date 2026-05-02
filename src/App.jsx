@@ -1036,11 +1036,11 @@ export default function App() {
 
                 {county.status === 'external_only' ? (
                   <div className="button-row parcel-actions">
-                    <button type="button" onClick={() => openExternalParcelLink(county.officialViewerUrl)}>
-                      Open ORKA
+                    <button type="button" onClick={() => openExternalParcelLink(county.officialViewerUrl)} disabled={!county.officialViewerUrl}>
+                      {county.officialViewerLabel ?? 'Open Official Viewer'}
                     </button>
-                    <button type="button" onClick={() => openExternalParcelLink(county.parcelSearchUrl)}>
-                      Parcel Search
+                    <button type="button" onClick={() => openExternalParcelLink(county.parcelSearchUrl)} disabled={!county.parcelSearchUrl}>
+                      {county.parcelSearchLabel ?? 'Parcel Search'}
                     </button>
                   </div>
                 ) : county.id === 'richardson-ne' ? (
