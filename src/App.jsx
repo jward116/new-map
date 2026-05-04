@@ -1216,7 +1216,7 @@ export default function App() {
           </div>
 
           <label><input type="checkbox" checked={layerVisibility.boundary} onChange={() => toggleLayer('boundary')} /> Reservation boundary</label>
-          <label><input type="checkbox" checked={layerVisibility.biaLar} onChange={() => toggleLayer('biaLar')} /> BIA Iowa LAR boundary</label>
+          <label><input type="checkbox" checked={layerVisibility.biaLar} onChange={() => toggleLayer('biaLar')} /> BIA reference area</label>
           <label><input type="checkbox" checked={layerVisibility.stateLine} onChange={() => toggleLayer('stateLine')} /> KS / NE state line</label>
           <label><input type="checkbox" checked={layerVisibility.places} onChange={() => toggleLayer('places')} /> Places / saved field points</label>
           <label><input type="checkbox" checked={layerVisibility.accuracy} onChange={() => toggleLayer('accuracy')} /> GPS accuracy circle</label>

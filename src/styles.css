@@ -1400,3 +1400,11 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     display: none !important;
   }
 }
+
+
+/* Reference-only jurisdiction language */
+.reference-warning {
+  color: #fef08a;
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
