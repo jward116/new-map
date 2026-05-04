@@ -956,3 +956,64 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     max-height: 50vh;
   }
 }
+
+
+/* UI Tabs V1 - drawer tabs */
+.drawer-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+  padding: 10px 10px 8px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.9));
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  backdrop-filter: blur(10px);
+}
+
+.drawer-tab {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(30, 41, 59, 0.74);
+  color: rgba(226, 232, 240, 0.8);
+  border-radius: 999px;
+  padding: 8px 5px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.drawer-tab.active {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.95), rgba(14, 116, 144, 0.95));
+  border-color: rgba(34, 197, 94, 0.8);
+  color: white;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.12);
+}
+
+.tab-panel {
+  display: none;
+}
+
+.drawer-tab-status .tab-status,
+.drawer-tab-parcels .tab-parcels,
+.drawer-tab-layers .tab-layers,
+.drawer-tab-contacts .tab-contacts,
+.drawer-tab-saved .tab-saved {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .drawer-tabs {
+    gap: 4px;
+    padding: 8px 8px 6px;
+  }
+
+  .drawer-tab {
+    padding: 7px 3px;
+    font-size: 0.62rem;
+  }
+
+  .drawer {
+    max-height: 54vh;
+  }
+}
