@@ -1171,3 +1171,35 @@ input[type="checkbox"] { width: 18px; height: 18px; }
   margin-bottom: 9px;
   text-align: center;
 }
+
+
+/* Tribal highlight status card */
+.tribal-highlight-status-card {
+  margin-top: 10px;
+  padding: 11px;
+  border-radius: 14px;
+  border: 1px solid rgba(250, 204, 21, 0.32);
+  background: linear-gradient(135deg, rgba(250, 204, 21, 0.12), rgba(15, 23, 42, 0.72));
+}
+
+.tribal-highlight-status-card strong {
+  display: block;
+  color: #fef08a;
+  font-size: 0.92rem;
+  font-weight: 950;
+}
+
+.tribal-highlight-status-card span {
+  display: block;
+  margin-top: 4px;
+  color: #f8fafc;
+  font-size: 0.8rem;
+  font-weight: 850;
+}
+
+.tribal-highlight-status-card p {
+  margin: 7px 0 0;
+  color: rgba(226, 232, 240, 0.74);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}

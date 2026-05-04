@@ -1026,6 +1026,13 @@ export default function App() {
     });
   }, [boundary, layerVisibility.boundary]);
 
+  function getVerifiedTribalParcelCount() {
+    if (!tribalOwnedParcels?.counties) return 0;
+
+    return Object.values(tribalOwnedParcels.counties)
+      .reduce((sum, county) => sum + (county.verifiedParcelIds?.length ?? 0), 0);
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -1111,6 +1118,15 @@ export default function App() {
           <p className="muted">
             Verified parcel sources for the field map. Brown County remains external-only until a verified public parcel polygon API is found.
           </p>
+
+          <div className="tribal-highlight-status-card">
+            <strong>Tribal parcel highlights</strong>
+            <span>Verified tribal parcel IDs loaded: {getVerifiedTribalParcelCount()}</span>
+            <p>
+              Gold highlights only appear for verified parcel IDs listed in the tribal-owned parcel file.
+              Do not guess tribal ownership.
+            </p>
+          </div>
 
           <div className="parcel-source-list">
             {countyParcelSources.map((county) => (
