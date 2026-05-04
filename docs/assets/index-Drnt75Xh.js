@@ -58,19 +58,23 @@ Error generating stack: `+l.message+`
         ${oe?`<div class="place-popup-row"><span>Website</span><strong>${_e(oe)}</strong></div>`:""}
         ${se?`<div class="place-popup-notes">${_e(se)}</div>`:""}
       </div>
-    `}Tt.useEffect(()=>{const m=g.current.places;!m||!F||m.eachLayer(M=>{var R;const W=((R=M.feature)==null?void 0:R.properties)??{};M.setIcon&&M.setIcon(Ba(W)),M.bindPopup&&M.bindPopup(mo(W))})},[F,D.places]),Tt.useEffect(()=>{S.current&&(g.current.baseMap||ki(nt))},[]);function ki(m){const M=S.current;if(!M)return;const W=gs[m]||gs.satellite;g.current.baseMap&&(M.removeLayer(g.current.baseMap),g.current.baseMap=null);const R=qe.tileLayer(W.url,{...W.options,zIndex:1});R.addTo(M),R.bringToBack(),g.current.baseMap=R,Et(m)}function Hn(m){at(M=>({...M,[m]:!M[m]}))}Object.entries(K).filter(([,m])=>!m).map(([m])=>`hide-${m}`).join(" "),Tt.useEffect(()=>{fetch("./data/county-parcel-sources.json").then(m=>m.json()).then(m=>rt(m.counties??[])).catch(()=>rt([]))},[]);function bl(m){m&&window.open(m,"_blank","noopener,noreferrer")}Tt.useEffect(()=>{fetch("./data/tribal-owned-parcels.json").then(m=>m.json()).then(vt).catch(()=>vt({}))},[]);function Fn(m,M){if(!M)return!1;const W=yt==null?void 0:yt[m];return Array.isArray(W)?W.map(R=>String(R).trim()).includes(String(M).trim()):!1}function Le(m={}){const M=m.PID;return Fn("richardson-ne",M)?{color:"#facc15",weight:3,opacity:1,fillColor:"#facc15",fillOpacity:.28}:{color:"#38bdf8",weight:1.5,opacity:.95,fill:!1}}function We(m,M){return!1}function Re(m){return`https://report.gworks.com/report.ashx?county=richardson&id=${encodeURIComponent(m)}&subs=true&type=assessor`}function $n(m){return m==null?"Not listed":String(m).trim()||"Not listed"}function Sl(m={}){const M=$n(m.PID),W=$n(m.acres),R=M!=="Not listed"?Re(M):"";return`
+    `}Tt.useEffect(()=>{const m=g.current.places;!m||!F||m.eachLayer(M=>{var R;const W=((R=M.feature)==null?void 0:R.properties)??{};M.setIcon&&M.setIcon(Ba(W)),M.bindPopup&&M.bindPopup(mo(W))})},[F,D.places]),Tt.useEffect(()=>{S.current&&(g.current.baseMap||ki(nt))},[]);function ki(m){const M=S.current;if(!M)return;const W=gs[m]||gs.satellite;g.current.baseMap&&(M.removeLayer(g.current.baseMap),g.current.baseMap=null);const R=qe.tileLayer(W.url,{...W.options,zIndex:1});R.addTo(M),R.bringToBack(),g.current.baseMap=R,Et(m)}function Hn(m){at(M=>({...M,[m]:!M[m]}))}Object.entries(K).filter(([,m])=>!m).map(([m])=>`hide-${m}`).join(" "),Tt.useEffect(()=>{fetch("./data/county-parcel-sources.json").then(m=>m.json()).then(m=>rt(m.counties??[])).catch(()=>rt([]))},[]);function bl(m){m&&window.open(m,"_blank","noopener,noreferrer")}Tt.useEffect(()=>{fetch("./data/tribal-owned-parcels.json").then(m=>m.json()).then(vt).catch(()=>vt({}))},[]);function Fn(m,M){if(!M)return!1;const W=yt==null?void 0:yt[m];return Array.isArray(W)?W.map(R=>String(R).trim()).includes(String(M).trim()):!1}function Le(m={}){const M=m.PID;return Fn("richardson-ne",M)?{color:"#facc15",weight:3,opacity:1,fillColor:"#facc15",fillOpacity:.28}:{color:"#38bdf8",weight:1.5,opacity:.95,fill:!1}}function We(m,M){return!1}function Re(m){return`https://report.gworks.com/report.ashx?county=richardson&id=${encodeURIComponent(m)}&subs=true&type=assessor`}function $n(m){return m==null?"Not listed":String(m).trim()||"Not listed"}function Sl(m={}){const M=$n(m.PID??m.pid??m.ParcelID??m.parcelId),W=$n(m.acres??m.Acres??m.ACRES),R=M!=="Not listed"?Re(M):"";return`
       <div class="parcel-popup">
         
         <div class="parcel-popup-title">Richardson County Parcel</div>
+
         <div class="parcel-popup-row">
           <span>Parcel ID</span>
           <strong>${M}</strong>
         </div>
+
         <div class="parcel-popup-row">
           <span>Acres</span>
           <strong>${W}</strong>
         </div>
+
         ${R?`<a class="parcel-popup-link" href="${R}" target="_blank" rel="noopener noreferrer">Open Property Info</a>`:""}
+
         <div class="parcel-popup-note">
           Owner details are not exposed directly in the GIS parcel layer. Use Open Property Info to view the public assessor report.
         </div>
