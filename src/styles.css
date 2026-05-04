@@ -1457,3 +1457,20 @@ input[type="checkbox"] { width: 18px; height: 18px; }
 .mini-action:hover {
   background: rgba(250, 204, 21, 0.24);
 }
+
+/* Richardson property info popup link */
+.parcel-popup-link {
+  display: block;
+  margin-top: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white !important;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+}
+
+.parcel-popup-link:hover {
+  background: #1d4ed8;
+}
