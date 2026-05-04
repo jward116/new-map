@@ -212,6 +212,8 @@ export default function App() {
   const [savedPlaces, setSavedPlaces] = useState(() => loadSavedPlaces());
   const [parcelSources, setParcelSources] = useState([]);
   const [countyParcelSources, setCountyParcelSources] = useState([]);
+  const [addressPoints, setAddressPoints] = useState(null);
+  const [addressPointFilter, setAddressPointFilter] = useState('all');
   const [tribalOwnedParcels, setTribalOwnedParcels] = useState({});
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState('');
@@ -222,7 +224,7 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeDrawerTab, setActiveDrawerTab] = useState('parcels');
   const [placeDraft, setPlaceDraft] = useState({ name: '', type: 'Field Point', phone: '', notes: '' });
-  const [layerVisibility, setLayerVisibility] = useState({ boundary: true, stateLine: true, places: true, accuracy: true });
+  const [layerVisibility, setLayerVisibility] = useState({ boundary: true, stateLine: true, places: true, accuracy: true, addressPoints: false });
   const [categoryVisibility, setCategoryVisibility] = useState({
     law: true,
     court: true,
@@ -1239,6 +1241,112 @@ export default function App() {
     return `${Number(lat).toFixed(6)}, ${Number(lng).toFixed(6)}`;
   }
 
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}data/address-points.geojson`)
+      .then((res) => res.json())
+      .then(setAddressPoints)
+      .catch(() => setAddressPoints(null));
+  }, []);
+
+  function shouldShowAddressPoint(feature) {
+    const props = feature?.properties ?? {};
+    if (addressPointFilter === 'all') return true;
+    if (addressPointFilter === 'needs_verified') {
+      return String(props.verification_status ?? '').toLowerCase().includes('needs');
+    }
+    return props.category === addressPointFilter;
+  }
+
+  function buildAddressPointPopup(properties = {}) {
+    const address = properties.address || properties.label || 'Address point';
+    const city = properties.city || '';
+    const county = properties.county || '';
+    const state = properties.state || '';
+    const zip = properties.zip || '';
+    const type = properties.category === 'public_or_business' ? 'Public / business' : 'Address';
+    const verify = properties.verification_status || 'Public address point - needs field verification';
+
+    return `
+      <div class="parcel-popup">
+        <div class="parcel-popup-title">Address Point</div>
+        <div class="parcel-popup-row">
+          <span>Address</span>
+          <strong>${address}</strong>
+        </div>
+        <div class="parcel-popup-row">
+          <span>Area</span>
+          <strong>${city} ${state} ${zip}</strong>
+        </div>
+        <div class="parcel-popup-row">
+          <span>County</span>
+          <strong>${county}</strong>
+        </div>
+        <div class="parcel-popup-row">
+          <span>Type</span>
+          <strong>${type}</strong>
+        </div>
+        <div class="parcel-popup-note">
+          ${verify}. Source: ${properties.source || 'Public address data'}.
+        </div>
+      </div>
+    `;
+  }
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    if (layersRef.current.addressPoints) {
+      layersRef.current.addressPoints.remove();
+      layersRef.current.addressPoints = null;
+    }
+
+    if (!addressPoints || !layerVisibility.addressPoints) return;
+
+    const filtered = {
+      ...addressPoints,
+      features: (addressPoints.features ?? []).filter(shouldShowAddressPoint)
+    };
+
+    const layer = L.geoJSON(filtered, {
+      pointToLayer: (feature, latlng) => {
+        const props = feature.properties ?? {};
+        const isPublic = props.category === 'public_or_business';
+
+        return L.circleMarker(latlng, {
+          radius: isPublic ? 6 : 4,
+          color: isPublic ? '#facc15' : '#a78bfa',
+          weight: 2,
+          fillColor: isPublic ? '#facc15' : '#a78bfa',
+          fillOpacity: 0.78
+        });
+      },
+      onEachFeature: (feature, pointLayer) => {
+        pointLayer.bindPopup(buildAddressPointPopup(feature.properties ?? {}));
+      }
+    }).addTo(map);
+
+    layersRef.current.addressPoints = layer;
+
+    setLocationError(`Loaded ${filtered.features.length} address point(s).`);
+  }, [addressPoints, layerVisibility.addressPoints, addressPointFilter]);
+
+  function showAddressPointsLayer() {
+    setLayerVisibility((prev) => ({
+      ...prev,
+      addressPoints: true
+    }));
+    setLocationError('Address points turned on. Purple/gold dots show public address points from Kansas NG911 data.');
+  }
+
+  function hideAddressPointsLayer() {
+    setLayerVisibility((prev) => ({
+      ...prev,
+      addressPoints: false
+    }));
+    setLocationError('Address points turned off.');
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -1458,6 +1566,7 @@ export default function App() {
           ) : null}
           <label><input type="checkbox" checked={layerVisibility.stateLine} onChange={() => toggleLayer('stateLine')} /> KS / NE state line</label>
           <label><input type="checkbox" checked={layerVisibility.places} onChange={() => toggleLayer('places')} /> Places / saved field points</label>
+          <label><input type="checkbox" checked={layerVisibility.addressPoints} onChange={() => toggleLayer('addressPoints')} /> Address points</label>
           <label><input type="checkbox" checked={layerVisibility.accuracy} onChange={() => toggleLayer('accuracy')} /> GPS accuracy circle</label>
         </div>
 
@@ -1478,6 +1587,34 @@ export default function App() {
 
         <div className="drawer-section tab-panel tab-places">
           <h2>Places & contacts</h2>
+
+          <div className="address-point-quick-card">
+            <strong>Address Points</strong>
+            <p className="muted">
+              Shows public Kansas NG911 address points near the Iowa Tribe area. Purple dots are address points. Gold dots are public/business-style points.
+            </p>
+            <div className="button-row compact">
+              <button type="button" className="primary" onClick={showAddressPointsLayer}>
+                Show Address Points
+              </button>
+              <button type="button" onClick={hideAddressPointsLayer}>
+                Hide
+              </button>
+            </div>
+          </div>
+
+          <div className="address-point-filter-card">
+            <strong>Address point filter</strong>
+            <select className="search" value={addressPointFilter} onChange={(e) => setAddressPointFilter(e.target.value)}>
+              <option value="all">All address points</option>
+              <option value="address">Address / residence-style points</option>
+              <option value="public_or_business">Public / business points</option>
+              <option value="needs_verified">Needs field verification</option>
+            </select>
+            <p className="muted">
+              Address points come from public Kansas NG911 data clipped near the tribal area. Use as a reference and field verify important locations.
+            </p>
+          </div>
           <input className="search" placeholder="Search facility, gate, pasture, business..." value={query} onChange={(e) => setQuery(e.target.value)} />
           <div className="result-list">
             {filteredPlaces.map((feature, index) => (

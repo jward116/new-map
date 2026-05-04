@@ -1798,3 +1798,60 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     display: none !important;
   }
 }
+
+
+/* Address points layer */
+.address-point-filter-card {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 13px;
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  background: rgba(88, 28, 135, 0.14);
+}
+
+.address-point-filter-card strong {
+  display: block;
+  color: #ddd6fe;
+  font-size: 0.86rem;
+  font-weight: 950;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 720px) {
+  .address-point-filter-card {
+    padding: 7px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .address-point-filter-card p {
+    display: none !important;
+  }
+}
+
+/* Address point quick controls */
+.address-point-quick-card {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 13px;
+  border: 1px solid rgba(167, 139, 250, 0.34);
+  background: rgba(76, 29, 149, 0.18);
+}
+
+.address-point-quick-card strong {
+  display: block;
+  color: #ddd6fe;
+  font-size: 0.86rem;
+  font-weight: 950;
+  margin-bottom: 5px;
+}
+
+@media (max-width: 720px) {
+  .address-point-quick-card {
+    padding: 7px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .address-point-quick-card p {
+    display: none !important;
+  }
+}
