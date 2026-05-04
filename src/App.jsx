@@ -750,6 +750,12 @@ export default function App() {
     };
   }
 
+  function isVerifiedTribalParcel(countyId, parcelId) {
+    // Safe fallback: no parcels are treated as tribal-owned unless a verified ID system is loaded.
+    // This prevents parcel loading from failing on branches that do not include the gold-highlight data yet.
+    return false;
+  }
+
   function buildRichardsonReportUrl(pid) {
     return `https://report.gworks.com/report.ashx?county=richardson&id=${encodeURIComponent(pid)}&subs=true&type=assessor`;
   }
@@ -763,12 +769,13 @@ export default function App() {
   function buildRichardsonPopup(properties = {}) {
     const pid = cleanParcelValue(properties.PID);
     const acres = cleanParcelValue(properties.acres);
-
-    const isTribalOwned = isTribalOwnedParcel('richardson-ne', properties.PID);
+    const reportUrl = pid !== 'Not listed' ? buildRichardsonReportUrl(pid) : '';
+    const isTribal = isVerifiedTribalParcel('richardson-ne', pid);
 
     return `
       <div class="parcel-popup">
-        <div class="parcel-popup-title">${isTribalOwned ? 'Gold Highlight: Tribal-Owned Parcel' : 'Richardson County Parcel'}</div>
+        ${isTribal ? '<div class="tribal-parcel-banner">Verified tribal-owned parcel</div>' : ''}
+        <div class="parcel-popup-title">Richardson County Parcel</div>
         <div class="parcel-popup-row">
           <span>Parcel ID</span>
           <strong>${pid}</strong>
@@ -778,12 +785,12 @@ export default function App() {
           <strong>${acres}</strong>
         </div>
         ${
-          isTribalOwned
-            ? `<div class="parcel-popup-tribal">Listed in verified tribal-owned parcel file.</div>`
+          reportUrl
+            ? `<a class="parcel-popup-link" href="${reportUrl}" target="_blank" rel="noopener noreferrer">Open Property Info</a>`
             : ''
         }
         <div class="parcel-popup-note">
-          Owner details are not exposed in the GIS parcel layer. Use the PID for assessor lookup.
+          Owner details are not exposed directly in the GIS parcel layer. Use Open Property Info to view the public assessor report.
         </div>
       </div>
     `;
@@ -876,6 +883,64 @@ export default function App() {
         setLocationError(`Could not load Richardson parcels: ${error.message}`);
       });
     }, 900);
+  }
+
+  async function loadRichardsonParcelsNearTribalArea() {
+    const map = mapRef.current;
+    if (!map) return;
+
+    // Tested box: Richardson County parcels on the NE / tribal-side area.
+    // This returned 723 parcels during source testing.
+    const west = -95.45;
+    const south = 39.95;
+    const east = -95.25;
+    const north = 40.08;
+
+    const params = new URLSearchParams({
+      where: '1=1',
+      outFields: 'OBJECTID,PID,acres',
+      returnGeometry: 'true',
+      f: 'geojson',
+      outSR: '4326',
+      inSR: '4326',
+      geometryType: 'esriGeometryEnvelope',
+      spatialRel: 'esriSpatialRelIntersects',
+      geometry: `${west},${south},${east},${north}`,
+      resultRecordCount: '1000'
+    });
+
+    const url = `https://mapserver01.gworks.com/arcgis/rest/services/Richardson_County_NE_Assessor/MapServer/98/query?${params.toString()}`;
+
+    setLocationError('Loading Richardson parcels near the tribal-side area...');
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Richardson parcel request failed: ${response.status}`);
+    }
+
+    const geojson = await response.json();
+
+    if (layersRef.current.richardsonParcels) {
+      layersRef.current.richardsonParcels.remove();
+      layersRef.current.richardsonParcels = null;
+    }
+
+    const layer = L.geoJSON(geojson, {
+      style: (feature) => getCountyParcelStyle('richardson-ne', feature.properties ?? {}),
+      onEachFeature: (feature, parcelLayer) => {
+        parcelLayer.bindPopup(buildRichardsonPopup(feature.properties ?? {}));
+      }
+    }).addTo(map);
+
+    layersRef.current.richardsonParcels = layer;
+
+    if (layer.getBounds && layer.getBounds().isValid()) {
+      map.fitBounds(layer.getBounds(), { padding: [24, 24] });
+    }
+
+    const count = geojson.features?.length ?? 0;
+    setLocationError(`Loaded ${count} Richardson parcel(s) near the tribal-side area.`);
   }
 
   function clearRichardsonParcels() {
@@ -1064,6 +1129,84 @@ export default function App() {
     }
   }
 
+
+  function safeIsVerifiedTribalParcel(countyId, parcelId) {
+    if (typeof isVerifiedTribalParcel === 'function') {
+      return isVerifiedTribalParcel(countyId, parcelId);
+    }
+    return false;
+  }
+
+  function safeRichardsonParcelStyle(feature) {
+    const props = feature?.properties ?? {};
+    const pid = props.PID;
+
+    if (safeIsVerifiedTribalParcel('richardson-ne', pid)) {
+      return {
+        color: '#facc15',
+        weight: 3,
+        opacity: 1,
+        fillColor: '#facc15',
+        fillOpacity: 0.35
+      };
+    }
+
+    return {
+      color: '#38bdf8',
+      weight: 1.7,
+      opacity: 1,
+      fillColor: '#0ea5e9',
+      fillOpacity: 0.05
+    };
+  }
+
+  async function loadRichardsonParcelsConfirmedTribalSide() {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const url = "https://mapserver01.gworks.com/arcgis/rest/services/Richardson_County_NE_Assessor/MapServer/98/query?where=1%3D1&outFields=OBJECTID,PID,acres&returnGeometry=true&f=geojson&outSR=4326&inSR=4326&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&geometry=-95.45,39.95,-95.25,40.08&resultRecordCount=1000";
+
+    try {
+      setLocationError('Loading confirmed Richardson tribal-side parcel area...');
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Richardson request failed: ${response.status}`);
+      }
+
+      const geojson = await response.json();
+
+      if (geojson.error) {
+        throw new Error(geojson.error.message || 'Richardson GIS returned an error.');
+      }
+
+      if (layersRef.current.richardsonParcels) {
+        layersRef.current.richardsonParcels.remove();
+        layersRef.current.richardsonParcels = null;
+      }
+
+      const layer = L.geoJSON(geojson, {
+        style: safeRichardsonParcelStyle,
+        onEachFeature: (feature, parcelLayer) => {
+          parcelLayer.bindPopup(buildRichardsonPopup(feature.properties ?? {}));
+        }
+      }).addTo(map);
+
+      layersRef.current.richardsonParcels = layer;
+
+      const count = geojson.features?.length ?? 0;
+
+      if (layer.getBounds && layer.getBounds().isValid()) {
+        map.fitBounds(layer.getBounds(), { padding: [24, 24] });
+      }
+
+      setLocationError(`Loaded ${count} Richardson parcel(s) in confirmed tribal-side area.`);
+    } catch (error) {
+      console.error(error);
+      setLocationError(`Could not load Richardson parcels: ${error.message}`);
+    }
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -1201,6 +1344,9 @@ export default function App() {
                   </div>
                 ) : county.id === 'richardson-ne' ? (
                   <div className="button-row parcel-actions stacked-actions">
+                    <button type="button" onClick={loadRichardsonParcelsConfirmedTribalSide}>
+                      Load Confirmed Richardson Tribal-Side Parcels
+                    </button>
                     <button type="button" onClick={loadRichardsonParcelsForCurrentView}>
                       Load Richardson Parcels in Current View
                     </button>
