@@ -206,6 +206,7 @@ export default function App() {
   const watchIdRef = useRef(null);
 
   const [boundary, setBoundary] = useState(null);
+  const [biaLarBoundary, setBiaLarBoundary] = useState(null);
   const [stateLine, setStateLine] = useState(null);
   const [places, setPlaces] = useState(null);
   const [savedPlaces, setSavedPlaces] = useState(() => loadSavedPlaces());
@@ -1033,6 +1034,13 @@ export default function App() {
       .reduce((sum, county) => sum + (county.verifiedParcelIds?.length ?? 0), 0);
   }
 
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}data/bia-iowa-lar-boundary.geojson`)
+      .then((res) => res.json())
+      .then(setBiaLarBoundary)
+      .catch(() => setBiaLarBoundary(null));
+  }, []);
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -1208,6 +1216,7 @@ export default function App() {
           </div>
 
           <label><input type="checkbox" checked={layerVisibility.boundary} onChange={() => toggleLayer('boundary')} /> Reservation boundary</label>
+          <label><input type="checkbox" checked={layerVisibility.biaLar} onChange={() => toggleLayer('biaLar')} /> BIA Iowa LAR boundary</label>
           <label><input type="checkbox" checked={layerVisibility.stateLine} onChange={() => toggleLayer('stateLine')} /> KS / NE state line</label>
           <label><input type="checkbox" checked={layerVisibility.places} onChange={() => toggleLayer('places')} /> Places / saved field points</label>
           <label><input type="checkbox" checked={layerVisibility.accuracy} onChange={() => toggleLayer('accuracy')} /> GPS accuracy circle</label>
