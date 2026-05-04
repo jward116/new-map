@@ -1117,3 +1117,30 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     font-size: 0.55rem;
   }
 }
+
+/* UI fix: keep drawer below top status box on desktop */
+@media (min-width: 721px) {
+  .drawer {
+    top: 188px !important;
+    bottom: 18px !important;
+    max-height: calc(100vh - 206px) !important;
+    overflow-y: auto !important;
+  }
+
+  .drawer.open {
+    top: 188px !important;
+  }
+
+  .drawer-tabs {
+    top: 0 !important;
+  }
+}
+
+/* Keep mobile drawer usable as a lower panel */
+@media (max-width: 720px) {
+  .drawer {
+    top: auto !important;
+    bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    max-height: 54vh !important;
+  }
+}
