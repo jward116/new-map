@@ -802,3 +802,157 @@ input[type="checkbox"] { width: 18px; height: 18px; }
   background: #2563eb;
   color: white !important;
 }
+
+
+/* UI Field Layout V1 - compact field header/status */
+.topbar {
+  min-height: unset;
+}
+
+.topbar h1 {
+  line-height: 1.05;
+}
+
+.eyebrow {
+  color: rgba(187, 247, 208, 0.9);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.badge::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #94a3b8;
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15);
+}
+
+.badge[class*="inside"]::before,
+.badge.good::before,
+.badge.success::before,
+.badge.safe::before {
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+}
+
+.badge[class*="outside"]::before,
+.badge.bad::before,
+.badge.danger::before,
+.badge.error::before {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+}
+
+.badge[class*="warning"]::before,
+.badge.warn::before {
+  background: #facc15;
+  box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.18);
+}
+
+.status-card {
+  max-width: 460px;
+}
+
+.status-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.status-grid div {
+  min-width: 0;
+}
+
+.status-grid strong {
+  word-break: break-word;
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    top: max(7px, env(safe-area-inset-top));
+    left: 7px;
+    right: 7px;
+    padding: 7px 8px;
+    border-radius: 14px;
+    gap: 7px;
+  }
+
+  .topbar h1 {
+    font-size: 0.86rem;
+  }
+
+  .eyebrow {
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+  }
+
+  .menu-btn {
+    padding: 7px 8px;
+    font-size: 0.72rem;
+    border-radius: 999px;
+  }
+
+  .status-card {
+    top: calc(max(7px, env(safe-area-inset-top)) + 52px);
+    left: 7px;
+    right: 7px;
+    padding: 7px;
+    border-radius: 14px;
+    max-width: none;
+  }
+
+  .status-main {
+    gap: 4px;
+    margin-bottom: 5px;
+  }
+
+  .badge {
+    min-height: 20px;
+    padding: 3px 6px;
+    font-size: 0.58rem;
+    gap: 5px;
+  }
+
+  .badge::before {
+    width: 8px;
+    height: 8px;
+  }
+
+  .status-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .status-grid div {
+    padding: 5px;
+    border-radius: 9px;
+  }
+
+  .status-grid span {
+    font-size: 0.56rem;
+  }
+
+  .status-grid strong {
+    font-size: 0.66rem;
+    line-height: 1.15;
+  }
+
+  .button-row {
+    gap: 5px;
+    margin-top: 6px;
+  }
+
+  .button-row button {
+    padding: 7px 7px;
+    font-size: 0.7rem;
+    border-radius: 10px;
+  }
+
+  .drawer {
+    max-height: 50vh;
+  }
+}
