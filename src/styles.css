@@ -1203,3 +1203,200 @@ input[type="checkbox"] { width: 18px; height: 18px; }
   font-size: 0.76rem;
   line-height: 1.35;
 }
+
+/* Mobile Panel Cleanup V1 */
+@media (max-width: 720px) {
+  .app-shell {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .topbar {
+    top: max(6px, env(safe-area-inset-top)) !important;
+    left: 6px !important;
+    right: 6px !important;
+    padding: 6px 7px !important;
+    border-radius: 13px !important;
+    min-height: 42px !important;
+  }
+
+  .topbar h1 {
+    font-size: 0.78rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .eyebrow {
+    font-size: 0.52rem !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .menu-btn {
+    padding: 7px 8px !important;
+    font-size: 0.68rem !important;
+    border-radius: 999px !important;
+  }
+
+  .status-card {
+    top: calc(max(6px, env(safe-area-inset-top)) + 48px) !important;
+    left: 6px !important;
+    right: 6px !important;
+    padding: 6px !important;
+    border-radius: 13px !important;
+    max-height: 112px !important;
+    overflow: hidden !important;
+  }
+
+  .status-main {
+    gap: 4px !important;
+    margin-bottom: 4px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 2px !important;
+  }
+
+  .badge {
+    min-height: 19px !important;
+    padding: 3px 6px !important;
+    font-size: 0.55rem !important;
+    flex: 0 0 auto !important;
+  }
+
+  .status-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+  }
+
+  .status-grid div {
+    padding: 4px 5px !important;
+    border-radius: 8px !important;
+  }
+
+  .status-grid span {
+    font-size: 0.51rem !important;
+  }
+
+  .status-grid strong {
+    font-size: 0.6rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .status-card .button-row {
+    margin-top: 5px !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+  }
+
+  .status-card .button-row button {
+    padding: 6px 4px !important;
+    font-size: 0.62rem !important;
+    border-radius: 9px !important;
+  }
+
+  .drawer {
+    left: 6px !important;
+    right: 6px !important;
+    top: auto !important;
+    bottom: max(6px, env(safe-area-inset-bottom)) !important;
+    max-height: 48vh !important;
+    border-radius: 18px !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .drawer.open {
+    top: auto !important;
+    bottom: max(6px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .drawer-tabs {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 50 !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    padding: 7px 7px 6px !important;
+    border-radius: 18px 18px 0 0 !important;
+  }
+
+  .drawer-tab {
+    padding: 7px 2px !important;
+    font-size: 0.58rem !important;
+    border-radius: 999px !important;
+  }
+
+  .drawer-section {
+    padding: 9px !important;
+  }
+
+  .drawer-section h2 {
+    font-size: 0.9rem !important;
+    margin-bottom: 6px !important;
+  }
+
+  .drawer-section p,
+  .drawer-section li,
+  .muted {
+    font-size: 0.74rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .parcel-source-item,
+  .contact-item,
+  .field-info-grid div,
+  .nearest-card,
+  .parcel-card,
+  .legend-grid div {
+    padding: 8px !important;
+    border-radius: 12px !important;
+  }
+
+  .parcel-source-header strong,
+  .contact-main strong {
+    font-size: 0.82rem !important;
+  }
+
+  .parcel-source-header span,
+  .contact-main span {
+    font-size: 0.68rem !important;
+  }
+
+  .parcel-source-header em {
+    font-size: 0.58rem !important;
+    padding: 4px 6px !important;
+  }
+
+  .button-row,
+  .parcel-actions,
+  .contact-actions {
+    gap: 5px !important;
+  }
+
+  .button-row button,
+  .parcel-actions button,
+  .contact-actions button {
+    padding: 7px 5px !important;
+    font-size: 0.68rem !important;
+    border-radius: 10px !important;
+  }
+
+  .search {
+    padding: 8px 9px !important;
+    font-size: 0.78rem !important;
+    border-radius: 10px !important;
+  }
+
+  .legend-grid {
+    grid-template-columns: 1fr !important;
+    gap: 5px !important;
+  }
+
+  .basemap-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .leaflet-control-zoom {
+    display: none !important;
+  }
+}
