@@ -1257,36 +1257,118 @@ export default function App() {
     return props.category === addressPointFilter;
   }
 
+  function formatNg911Date(value) {
+    if (!value) return 'Not listed';
+
+    const numberValue = Number(value);
+    if (!Number.isFinite(numberValue)) return String(value);
+
+    const date = new Date(numberValue);
+    if (Number.isNaN(date.getTime())) return 'Not listed';
+
+    return date.toLocaleDateString();
+  }
+
+  function cleanAddressPopupValue(value) {
+    if (value === null || value === undefined) return '';
+    return String(value).trim();
+  }
+
   function buildAddressPointPopup(properties = {}) {
-    const address = properties.address || properties.label || 'Address point';
-    const city = properties.city || '';
-    const county = properties.county || '';
-    const state = properties.state || '';
-    const zip = properties.zip || '';
-    const type = properties.category === 'public_or_business' ? 'Public / business' : 'Address';
+    const original = properties.original ?? {};
+
+    const address = cleanAddressPopupValue(properties.address || properties.label || original.LABEL) || 'Address point';
+    const city = cleanAddressPopupValue(properties.city || original.POSTCO || original.MSAGCO || original.MUNI);
+    const county = cleanAddressPopupValue(properties.county || original.COUNTY);
+    const state = cleanAddressPopupValue(properties.state || original.STATE || 'KS');
+    const zip = cleanAddressPopupValue(properties.zip || original.ZIP);
+    const houseNumber = cleanAddressPopupValue(properties.houseNumber || original.HNO);
+    const roadName = cleanAddressPopupValue(properties.roadName || original.RD);
+    const roadType = cleanAddressPopupValue(properties.roadType || original.STS);
+    const locationType = cleanAddressPopupValue(properties.locationType || original.LOCTYPE);
+    const landmark = cleanAddressPopupValue(original.LMK || original.LOC || original.PLC);
+    const usng = cleanAddressPopupValue(original.USNGRID);
+    const lat = cleanAddressPopupValue(original.LAT);
+    const lng = cleanAddressPopupValue(original.LONG);
+    const lastUpdate = formatNg911Date(original.L_UPDATE);
+    const steward = cleanAddressPopupValue(original.STEWARD);
+    const ngAddressId = cleanAddressPopupValue(original.NGKSADDID || original.NGADDID);
+    const source = properties.source || 'Kansas NG911 public address points';
     const verify = properties.verification_status || 'Public address point - needs field verification';
+    const type = properties.category === 'public_or_business' ? 'Public / business' : 'Address';
 
     return `
-      <div class="parcel-popup">
+      <div class="parcel-popup address-popup">
         <div class="parcel-popup-title">Address Point</div>
+
         <div class="parcel-popup-row">
           <span>Address</span>
           <strong>${address}</strong>
         </div>
+
         <div class="parcel-popup-row">
-          <span>Area</span>
-          <strong>${city} ${state} ${zip}</strong>
+          <span>Community</span>
+          <strong>${[city, state, zip].filter(Boolean).join(' ') || 'Not listed'}</strong>
         </div>
+
         <div class="parcel-popup-row">
           <span>County</span>
-          <strong>${county}</strong>
+          <strong>${county || 'Not listed'}</strong>
         </div>
+
+        <div class="address-popup-grid">
+          <div>
+            <span>House #</span>
+            <strong>${houseNumber || '—'}</strong>
+          </div>
+          <div>
+            <span>Road</span>
+            <strong>${`${roadName} ${roadType}`.trim() || '—'}</strong>
+          </div>
+          <div>
+            <span>Type</span>
+            <strong>${type}</strong>
+          </div>
+          <div>
+            <span>Location</span>
+            <strong>${locationType || '—'}</strong>
+          </div>
+        </div>
+
+        ${
+          landmark
+            ? `<div class="parcel-popup-row">
+                <span>Landmark / location note</span>
+                <strong>${landmark}</strong>
+              </div>`
+            : ''
+        }
+
         <div class="parcel-popup-row">
-          <span>Type</span>
-          <strong>${type}</strong>
+          <span>Coordinates</span>
+          <strong>${lat && lng ? `${Number(lat).toFixed(6)}, ${Number(lng).toFixed(6)}` : 'Not listed'}</strong>
         </div>
+
+        ${
+          usng
+            ? `<div class="parcel-popup-row">
+                <span>US National Grid</span>
+                <strong>${usng}</strong>
+              </div>`
+            : ''
+        }
+
+        ${
+          ngAddressId
+            ? `<div class="parcel-popup-row">
+                <span>NG911 Address ID</span>
+                <strong>${ngAddressId}</strong>
+              </div>`
+            : ''
+        }
+
         <div class="parcel-popup-note">
-          ${verify}. Source: ${properties.source || 'Public address data'}.
+          ${verify}. Source: ${source}. Last update: ${lastUpdate}. Steward: ${steward || 'Not listed'}.
         </div>
       </div>
     `;

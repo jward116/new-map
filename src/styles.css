@@ -1855,3 +1855,39 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     display: none !important;
   }
 }
+
+/* Address point detailed popup */
+.address-popup {
+  min-width: 245px;
+}
+
+.address-popup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.address-popup-grid div {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 9px;
+  padding: 7px;
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.address-popup-grid span {
+  display: block;
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 900;
+}
+
+.address-popup-grid strong {
+  display: block;
+  color: #ffffff;
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
