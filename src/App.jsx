@@ -767,28 +767,34 @@ export default function App() {
   }
 
   function buildRichardsonPopup(properties = {}) {
-    const pid = cleanParcelValue(properties.PID);
-    const acres = cleanParcelValue(properties.acres);
+    const pid = cleanParcelValue(properties.PID ?? properties.pid ?? properties.ParcelID ?? properties.parcelId);
+    const acres = cleanParcelValue(properties.acres ?? properties.Acres ?? properties.ACRES);
     const reportUrl = pid !== 'Not listed' ? buildRichardsonReportUrl(pid) : '';
-    const isTribal = isVerifiedTribalParcel('richardson-ne', pid);
+    const isTribal = typeof isVerifiedTribalParcel === 'function'
+      ? isVerifiedTribalParcel('richardson-ne', pid)
+      : false;
 
     return `
       <div class="parcel-popup">
         ${isTribal ? '<div class="tribal-parcel-banner">Verified tribal-owned parcel</div>' : ''}
         <div class="parcel-popup-title">Richardson County Parcel</div>
+
         <div class="parcel-popup-row">
           <span>Parcel ID</span>
           <strong>${pid}</strong>
         </div>
+
         <div class="parcel-popup-row">
           <span>Acres</span>
           <strong>${acres}</strong>
         </div>
+
         ${
           reportUrl
             ? `<a class="parcel-popup-link" href="${reportUrl}" target="_blank" rel="noopener noreferrer">Open Property Info</a>`
             : ''
         }
+
         <div class="parcel-popup-note">
           Owner details are not exposed directly in the GIS parcel layer. Use Open Property Info to view the public assessor report.
         </div>
