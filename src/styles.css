@@ -1891,3 +1891,13 @@ input[type="checkbox"] { width: 18px; height: 18px; }
   margin-top: 2px;
 }
 
+
+
+/* Simple field-use address popup */
+.simple-address-popup {
+  min-width: 230px;
+}
+
+.simple-address-popup .parcel-popup-row {
+  margin-top: 8px;
+}
