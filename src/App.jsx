@@ -1007,7 +1007,7 @@ export default function App() {
         {locationError && <p className="error-text">{locationError}</p>}
       </section>
 
-      <aside className={drawerOpen ? 'drawer open' : 'drawer'}>
+      <aside className={`drawer ${drawerOpen ? 'open' : ''} drawer-tab-${activeDrawerTab}`}>
         <div className="drawer-tabs" role="tablist" aria-label="Field map panel sections">
           {Object.entries({
             status: 'Status',

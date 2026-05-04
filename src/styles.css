@@ -1017,3 +1017,16 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     max-height: 54vh;
   }
 }
+
+/* Fix tab panels showing inside drawer */
+.drawer .tab-panel {
+  display: none;
+}
+
+.drawer.drawer-tab-status .tab-status,
+.drawer.drawer-tab-parcels .tab-parcels,
+.drawer.drawer-tab-layers .tab-layers,
+.drawer.drawer-tab-contacts .tab-contacts,
+.drawer.drawer-tab-saved .tab-saved {
+  display: block;
+}
