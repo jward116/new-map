@@ -1213,6 +1213,32 @@ export default function App() {
     }
   }
 
+  function getActiveCoordinateParts() {
+    if (!activePoint) return { lat: null, lng: null };
+
+    const lat =
+      activePoint.lat ??
+      activePoint.latitude ??
+      activePoint.coords?.latitude ??
+      (Array.isArray(activePoint) ? activePoint[0] : null);
+
+    const lng =
+      activePoint.lng ??
+      activePoint.longitude ??
+      activePoint.coords?.longitude ??
+      (Array.isArray(activePoint) ? activePoint[1] : null);
+
+    return { lat, lng };
+  }
+
+  function getActiveCoordinateText() {
+    const { lat, lng } = getActiveCoordinateParts();
+
+    if (lat == null || lng == null) return 'No GPS point yet';
+
+    return `${Number(lat).toFixed(6)}, ${Number(lng).toFixed(6)}`;
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -1254,8 +1280,7 @@ export default function App() {
             status: 'Status',
             parcels: 'Parcels',
             layers: 'Layers',
-            contacts: 'Contacts',
-            saved: 'Saved'
+            places: 'Places'
           }).map(([key, label]) => (
             <button
               type="button"
@@ -1266,6 +1291,31 @@ export default function App() {
               {label}
             </button>
           ))}
+        </div>
+
+        <div className="drawer-section tab-panel tab-status mobile-field-status-card">
+          <h2>Field status</h2>
+          <div className="field-status-mini-grid">
+            <div>
+              <span>GPS / map point</span>
+              <strong>{getActiveCoordinateText()}</strong>
+            </div>
+            <div>
+              <span>Tracking</span>
+              <strong>{tracking ? 'On' : 'Off'}</strong>
+            </div>
+          </div>
+
+          {locationError ? <p className="field-status-note">{locationError}</p> : null}
+
+          <div className="button-row compact">
+            {!tracking ? (
+              <button className="primary" onClick={startTracking}>Start GPS</button>
+            ) : (
+              <button className="danger" onClick={stopTracking}>Stop GPS</button>
+            )}
+            <button onClick={copyCoordinates} disabled={!activePoint}>Copy GPS</button>
+          </div>
         </div>
 
         <div className="drawer-section warning">
@@ -1411,7 +1461,7 @@ export default function App() {
           <label><input type="checkbox" checked={layerVisibility.accuracy} onChange={() => toggleLayer('accuracy')} /> GPS accuracy circle</label>
         </div>
 
-        <div className="drawer-section tab-panel tab-saved">
+        <div className="drawer-section tab-panel tab-places">
           <h2>Save a field point</h2>
           <p className="muted">Start GPS or tap the map, then save that spot. Saved points stay on this device until you export them.</p>
           <input className="search" placeholder="Name, like North gate or Tribal Office" value={placeDraft.name} onChange={(e) => setPlaceDraft((p) => ({ ...p, name: e.target.value }))} />
@@ -1426,7 +1476,7 @@ export default function App() {
           <p className="muted">Saved on this device: {savedPlaces.length}</p>
         </div>
 
-        <div className="drawer-section tab-panel tab-contacts">
+        <div className="drawer-section tab-panel tab-places">
           <h2>Places & contacts</h2>
           <input className="search" placeholder="Search facility, gate, pasture, business..." value={query} onChange={(e) => setQuery(e.target.value)} />
           <div className="result-list">
@@ -1439,7 +1489,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="drawer-section tab-panel tab-parcels">
+        <div className="drawer-section tab-panel tab-parcels optional-parcel-links">
           <h2>Parcel / assessor links</h2>
           <p className="muted">These open the official/public parcel sources. This avoids loading huge parcel datasets into GitHub.</p>
           <div className="link-list">
@@ -1452,7 +1502,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="drawer-section tab-panel tab-status">
+        <div className="drawer-section tab-panel tab-status optional-help-card">
           <h2>What it can answer</h2>
           <ul>
             <li>Where am I right now?</li>

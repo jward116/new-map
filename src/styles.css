@@ -1491,3 +1491,112 @@ input[type="checkbox"] { width: 18px; height: 18px; }
 .parcel-popup-link:hover {
   background: #1d4ed8;
 }
+
+
+/* Field Use Cleanup V1 */
+.field-status-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.field-status-mini-grid div {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 12px;
+  padding: 9px;
+}
+
+.field-status-mini-grid span {
+  display: block;
+  color: rgba(226, 232, 240, 0.62);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.field-status-mini-grid strong {
+  display: block;
+  color: #f8fafc;
+  font-size: 0.9rem;
+  margin-top: 3px;
+  word-break: break-word;
+}
+
+.field-status-note {
+  margin: 8px 0 0;
+  color: rgba(226, 232, 240, 0.74);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+@media (min-width: 721px) {
+  .mobile-field-status-card {
+    display: none !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .status-card {
+    display: none !important;
+  }
+
+  .topbar {
+    min-height: 38px !important;
+    padding: 5px 7px !important;
+  }
+
+  .topbar h1 {
+    font-size: 0.74rem !important;
+  }
+
+  .eyebrow {
+    font-size: 0.5rem !important;
+  }
+
+  .menu-btn {
+    padding: 6px 8px !important;
+    font-size: 0.64rem !important;
+  }
+
+  .drawer {
+    max-height: 46vh !important;
+  }
+
+  .drawer-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .drawer-tab {
+    font-size: 0.62rem !important;
+  }
+
+  .optional-help-card,
+  .optional-parcel-links {
+    display: none !important;
+  }
+
+  .field-status-mini-grid div {
+    padding: 8px !important;
+  }
+
+  .field-status-mini-grid span {
+    font-size: 0.58rem !important;
+  }
+
+  .field-status-mini-grid strong {
+    font-size: 0.78rem !important;
+  }
+
+  .mobile-field-status-card .button-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* New Places tab selector */
+.drawer.drawer-tab-places .tab-places {
+  display: block;
+}
