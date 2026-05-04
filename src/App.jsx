@@ -218,6 +218,7 @@ export default function App() {
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [query, setQuery] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeDrawerTab, setActiveDrawerTab] = useState('parcels');
   const [placeDraft, setPlaceDraft] = useState({ name: '', type: 'Field Point', phone: '', notes: '' });
   const [layerVisibility, setLayerVisibility] = useState({ boundary: true, stateLine: true, places: true, accuracy: true });
   const [categoryVisibility, setCategoryVisibility] = useState({
@@ -1016,14 +1017,33 @@ export default function App() {
         {locationError && <p className="error-text">{locationError}</p>}
       </section>
 
-      <aside className={drawerOpen ? 'drawer open' : 'drawer'}>
+      <aside className={`drawer ${drawerOpen ? 'open' : ''} drawer-tab-${activeDrawerTab}`}>
+        <div className="drawer-tabs" role="tablist" aria-label="Field map panel sections">
+          {Object.entries({
+            status: 'Status',
+            parcels: 'Parcels',
+            layers: 'Layers',
+            contacts: 'Contacts',
+            saved: 'Saved'
+          }).map(([key, label]) => (
+            <button
+              type="button"
+              key={key}
+              className={activeDrawerTab === key ? 'drawer-tab active' : 'drawer-tab'}
+              onClick={() => setActiveDrawerTab(key)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
         <div className="drawer-section warning">
           <strong>How this works</strong>
           <p>The app uses public boundary data, your browser GPS, saved field points, and official county parcel links. It is built to work now without waiting on anyone.</p>
         </div>
 
 
-        <div className="drawer-section legend-card">
+        <div className="drawer-section tab-panel tab-layers legend-card">
           <h2>Map legend</h2>
 
           <div className="legend-grid">
@@ -1042,7 +1062,7 @@ export default function App() {
         </div>
 
 
-        <div className="drawer-section parcel-source-card">
+        <div className="drawer-section tab-panel tab-parcels parcel-source-card">
           <h2>County parcel sources</h2>
           <p className="muted">
             Verified parcel sources for the field map. Brown County remains external-only until a verified public parcel polygon API is found.
@@ -1109,7 +1129,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="drawer-section">
+        <div className="drawer-section tab-panel tab-layers">
           <h2>Layers</h2>
           <div className="drawer-basemap-safe">
             <div className="layer-subtitle">Map view</div>
@@ -1133,7 +1153,7 @@ export default function App() {
           <label><input type="checkbox" checked={layerVisibility.accuracy} onChange={() => toggleLayer('accuracy')} /> GPS accuracy circle</label>
         </div>
 
-        <div className="drawer-section">
+        <div className="drawer-section tab-panel tab-saved">
           <h2>Save a field point</h2>
           <p className="muted">Start GPS or tap the map, then save that spot. Saved points stay on this device until you export them.</p>
           <input className="search" placeholder="Name, like North gate or Tribal Office" value={placeDraft.name} onChange={(e) => setPlaceDraft((p) => ({ ...p, name: e.target.value }))} />
@@ -1148,7 +1168,7 @@ export default function App() {
           <p className="muted">Saved on this device: {savedPlaces.length}</p>
         </div>
 
-        <div className="drawer-section">
+        <div className="drawer-section tab-panel tab-contacts">
           <h2>Places & contacts</h2>
           <input className="search" placeholder="Search facility, gate, pasture, business..." value={query} onChange={(e) => setQuery(e.target.value)} />
           <div className="result-list">
@@ -1161,7 +1181,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="drawer-section">
+        <div className="drawer-section tab-panel tab-parcels">
           <h2>Parcel / assessor links</h2>
           <p className="muted">These open the official/public parcel sources. This avoids loading huge parcel datasets into GitHub.</p>
           <div className="link-list">
@@ -1174,7 +1194,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="drawer-section">
+        <div className="drawer-section tab-panel tab-status">
           <h2>What it can answer</h2>
           <ul>
             <li>Where am I right now?</li>
