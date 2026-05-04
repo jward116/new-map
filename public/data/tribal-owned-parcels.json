@@ -1,6 +1,20 @@
 {
-  "notes": "Verified tribal-owned parcel IDs go here. Do not add guessed parcel IDs.",
-  "richardson-ne": [],
-  "doniphan-ks": [],
-  "brown-ks": []
+  "notes": "Verified tribal-owned parcel IDs only. Do not guess. Parcels listed here can later be highlighted gold in the map.",
+  "counties": {
+    "richardson-ne": {
+      "parcelIdField": "PID",
+      "goldHighlightColor": "#facc15",
+      "verifiedParcelIds": []
+    },
+    "doniphan-ks": {
+      "parcelIdField": "PID",
+      "goldHighlightColor": "#facc15",
+      "verifiedParcelIds": []
+    },
+    "brown-ks": {
+      "parcelIdField": "PARCEL_ID_OR_QUICK_REF",
+      "goldHighlightColor": "#facc15",
+      "verifiedParcelIds": []
+    }
+  }
 }
