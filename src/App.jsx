@@ -1041,6 +1041,29 @@ export default function App() {
       .catch(() => setBiaLarBoundary(null));
   }, []);
 
+  function zoomToBiaReferenceArea() {
+    const map = mapRef.current;
+    if (!map || !biaLarBoundary) {
+      setLocationError('BIA reference boundary is not loaded yet.');
+      return;
+    }
+
+    let layer = layersRef.current.biaLarBoundary;
+
+    if (!layer) {
+      layer = L.geoJSON(biaLarBoundary);
+    }
+
+    const bounds = layer.getBounds?.();
+
+    if (bounds && bounds.isValid && bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [24, 24] });
+      setLocationError('Zoomed to BIA reference area.');
+    } else {
+      setLocationError('Could not zoom to BIA reference area.');
+    }
+  }
+
   return (
     <div className="app-shell">
       <div className="map" ref={mapElRef} />
@@ -1217,6 +1240,20 @@ export default function App() {
 
           <label><input type="checkbox" checked={layerVisibility.boundary} onChange={() => toggleLayer('boundary')} /> Reservation boundary</label>
           <label><input type="checkbox" checked={layerVisibility.biaLar} onChange={() => toggleLayer('biaLar')} /> BIA reference area</label>
+
+          {layerVisibility.biaLar ? (
+            <div className="bia-reference-info-card">
+              <strong>BIA Reference Area</strong>
+              <span>Iowa LAR · approx. 20,728.1 BIA GIS acres</span>
+              <p>
+                Reference only. This is not an individual parcel, exact tribal-owned land layer,
+                or final authority boundary without verification.
+              </p>
+              <button type="button" className="mini-action" onClick={zoomToBiaReferenceArea}>
+                Zoom to BIA Reference Area
+              </button>
+            </div>
+          ) : null}
           <label><input type="checkbox" checked={layerVisibility.stateLine} onChange={() => toggleLayer('stateLine')} /> KS / NE state line</label>
           <label><input type="checkbox" checked={layerVisibility.places} onChange={() => toggleLayer('places')} /> Places / saved field points</label>
           <label><input type="checkbox" checked={layerVisibility.accuracy} onChange={() => toggleLayer('accuracy')} /> GPS accuracy circle</label>
