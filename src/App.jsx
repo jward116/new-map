@@ -211,6 +211,7 @@ export default function App() {
   const [savedPlaces, setSavedPlaces] = useState(() => loadSavedPlaces());
   const [parcelSources, setParcelSources] = useState([]);
   const [countyParcelSources, setCountyParcelSources] = useState([]);
+  const [tribalOwnedParcels, setTribalOwnedParcels] = useState({});
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState('');
   const [dataWarning, setDataWarning] = useState('');
@@ -707,6 +708,47 @@ export default function App() {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}data/tribal-owned-parcels.json`)
+      .then((res) => res.json())
+      .then(setTribalOwnedParcels)
+      .catch(() => setTribalOwnedParcels({}));
+  }, []);
+
+  function isTribalOwnedParcel(countyId, parcelId) {
+    if (!parcelId) return false;
+
+    const list = tribalOwnedParcels?.[countyId];
+
+    if (!Array.isArray(list)) return false;
+
+    return list
+      .map((value) => String(value).trim())
+      .includes(String(parcelId).trim());
+  }
+
+  function getRichardsonParcelStyle(properties = {}) {
+    const pid = properties.PID;
+    const isTribalOwned = isTribalOwnedParcel('richardson-ne', pid);
+
+    if (isTribalOwned) {
+      return {
+        color: '#facc15',
+        weight: 3,
+        opacity: 1,
+        fillColor: '#facc15',
+        fillOpacity: 0.28
+      };
+    }
+
+    return {
+      color: '#38bdf8',
+      weight: 1.5,
+      opacity: 0.95,
+      fill: false
+    };
+  }
+
   function buildRichardsonReportUrl(pid) {
     return `https://report.gworks.com/report.ashx?county=richardson&id=${encodeURIComponent(pid)}&subs=true&type=assessor`;
   }
@@ -721,9 +763,11 @@ export default function App() {
     const pid = cleanParcelValue(properties.PID);
     const acres = cleanParcelValue(properties.acres);
 
+    const isTribalOwned = isTribalOwnedParcel('richardson-ne', properties.PID);
+
     return `
       <div class="parcel-popup">
-        <div class="parcel-popup-title">Richardson County Parcel</div>
+        <div class="parcel-popup-title">${isTribalOwned ? 'Gold Highlight: Tribal-Owned Parcel' : 'Richardson County Parcel'}</div>
         <div class="parcel-popup-row">
           <span>Parcel ID</span>
           <strong>${pid}</strong>
@@ -732,6 +776,11 @@ export default function App() {
           <span>Acres</span>
           <strong>${acres}</strong>
         </div>
+        ${
+          isTribalOwned
+            ? `<div class="parcel-popup-tribal">Listed in verified tribal-owned parcel file.</div>`
+            : ''
+        }
         <div class="parcel-popup-note">
           Owner details are not exposed in the GIS parcel layer. Use the PID for assessor lookup.
         </div>
@@ -780,12 +829,7 @@ export default function App() {
     }
 
     const layer = L.geoJSON(geojson, {
-      style: {
-        color: '#38bdf8',
-        weight: 1.5,
-        opacity: 0.95,
-        fill: false
-      },
+      style: (feature) => getRichardsonParcelStyle(feature.properties ?? {}),
       onEachFeature: (feature, parcelLayer) => {
         parcelLayer.bindPopup(buildRichardsonPopup(feature.properties ?? {}));
       }

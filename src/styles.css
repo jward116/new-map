@@ -1144,3 +1144,30 @@ input[type="checkbox"] { width: 18px; height: 18px; }
     max-height: 54vh !important;
   }
 }
+
+/* Tribal-owned parcel highlight popup label */
+.parcel-popup-tribal {
+  margin-top: 10px;
+  padding: 8px 9px;
+  border-radius: 10px;
+  background: rgba(250, 204, 21, 0.18);
+  border: 1px solid rgba(250, 204, 21, 0.55);
+  color: #facc15;
+  font-weight: 900;
+  font-size: 0.8rem;
+}
+
+
+/* Tribal-owned parcel gold highlight */
+.tribal-parcel-banner {
+  background: linear-gradient(135deg, #facc15, #f97316);
+  color: #111827;
+  border-radius: 10px;
+  padding: 7px 9px;
+  font-size: 0.74rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 9px;
+  text-align: center;
+}
