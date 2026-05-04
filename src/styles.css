@@ -1600,3 +1600,201 @@ input[type="checkbox"] { width: 18px; height: 18px; }
 .drawer.drawer-tab-places .tab-places {
   display: block;
 }
+
+/* Field Use Cleanup V2 - stronger phone simplification */
+@media (max-width: 720px) {
+  body {
+    overflow: hidden !important;
+  }
+
+  .topbar {
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 4px 6px !important;
+    gap: 6px !important;
+  }
+
+  .topbar h1 {
+    font-size: 0.68rem !important;
+    line-height: 1 !important;
+  }
+
+  .eyebrow {
+    font-size: 0.46rem !important;
+    letter-spacing: 0.06em !important;
+  }
+
+  .menu-btn {
+    padding: 5px 7px !important;
+    font-size: 0.6rem !important;
+  }
+
+  .status-card {
+    display: none !important;
+  }
+
+  .drawer {
+    left: 5px !important;
+    right: 5px !important;
+    bottom: max(5px, env(safe-area-inset-bottom)) !important;
+    max-height: 38vh !important;
+    border-radius: 16px !important;
+    overflow-y: auto !important;
+  }
+
+  .drawer-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 3px !important;
+    padding: 6px !important;
+  }
+
+  .drawer-tab {
+    padding: 6px 2px !important;
+    font-size: 0.56rem !important;
+  }
+
+  .drawer-section {
+    padding: 7px !important;
+  }
+
+  .drawer-section h2 {
+    font-size: 0.82rem !important;
+    margin: 0 0 5px !important;
+  }
+
+  .drawer-section p,
+  .drawer-section li,
+  .muted,
+  .parcel-source-item p,
+  .tribal-highlight-status-card p,
+  .parcel-capability,
+  .field-status-note {
+    font-size: 0.66rem !important;
+    line-height: 1.22 !important;
+  }
+
+  /* Hide long explanatory text on phone. Keep buttons and key labels. */
+  .parcel-source-item p,
+  .tribal-highlight-status-card p,
+  .parcel-capability,
+  .optional-help-card,
+  .optional-parcel-links {
+    display: none !important;
+  }
+
+  .tribal-highlight-status-card {
+    padding: 8px !important;
+    margin-top: 6px !important;
+  }
+
+  .tribal-highlight-status-card strong {
+    font-size: 0.78rem !important;
+  }
+
+  .tribal-highlight-status-card span {
+    font-size: 0.66rem !important;
+  }
+
+  .parcel-source-list {
+    gap: 6px !important;
+  }
+
+  .parcel-source-item {
+    padding: 7px !important;
+    border-radius: 11px !important;
+  }
+
+  .parcel-source-header strong {
+    font-size: 0.76rem !important;
+  }
+
+  .parcel-source-header span {
+    font-size: 0.6rem !important;
+  }
+
+  .parcel-source-header em {
+    font-size: 0.52rem !important;
+    padding: 3px 5px !important;
+  }
+
+  .button-row,
+  .parcel-actions,
+  .contact-actions {
+    gap: 4px !important;
+    margin-top: 6px !important;
+  }
+
+  .button-row button,
+  .parcel-actions button,
+  .contact-actions button,
+  .mini-action {
+    padding: 6px 5px !important;
+    font-size: 0.62rem !important;
+    border-radius: 9px !important;
+  }
+
+  .field-status-mini-grid {
+    gap: 5px !important;
+  }
+
+  .field-status-mini-grid div {
+    padding: 6px !important;
+  }
+
+  .field-status-mini-grid span {
+    font-size: 0.52rem !important;
+  }
+
+  .field-status-mini-grid strong {
+    font-size: 0.68rem !important;
+  }
+
+  .search {
+    padding: 7px 8px !important;
+    font-size: 0.7rem !important;
+    border-radius: 9px !important;
+  }
+
+  .result-list {
+    gap: 5px !important;
+  }
+
+  .result {
+    padding: 7px !important;
+    border-radius: 10px !important;
+  }
+
+  .result strong {
+    font-size: 0.74rem !important;
+  }
+
+  .result span {
+    font-size: 0.62rem !important;
+  }
+
+  .legend-grid {
+    gap: 4px !important;
+  }
+
+  .legend-filter {
+    padding: 6px !important;
+    border-radius: 10px !important;
+  }
+
+  .legend-filter strong {
+    font-size: 0.65rem !important;
+  }
+
+  .basemap-grid {
+    gap: 4px !important;
+  }
+
+  .basemap {
+    padding: 6px 4px !important;
+    font-size: 0.62rem !important;
+  }
+
+  .leaflet-control-attribution {
+    display: none !important;
+  }
+}
