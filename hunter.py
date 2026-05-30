@@ -2,11 +2,16 @@ import sys
 import json
 import os
 from datetime import datetime
-from langchain_ollama import OllamaLLM
-from fpdf import FPDF
 
 PROFILE_FILE = "master_profile.json"
-llm = OllamaLLM(model="llama3.2", temperature=0.65)
+_llm = None
+
+def get_llm():
+    global _llm
+    if _llm is None:
+        from langchain_ollama import OllamaLLM
+        _llm = OllamaLLM(model="llama3.2", temperature=0.65)
+    return _llm
 
 def load_profile():
     if os.path.exists(PROFILE_FILE):
@@ -38,7 +43,7 @@ Experience:
 {experience}
 
 Output ONLY the clean bullet points."""
-    reframed = llm.invoke(prompt).strip()
+    reframed = get_llm().invoke(prompt).strip()
     profile = {"experience": experience, "reframed_skills": reframed.split("\n"), "goals": {"salary": 160000, "hours": "flexible or normal hours, remote/hybrid"}}
     save_profile(profile)
     print("\n✅ MASTER PROFILE CREATED - YOUR BACKGROUND IS NOW A SUPERPOWER")
@@ -57,11 +62,12 @@ Goals: ${profile['goals']['salary']}+, flexible/normal hours, remote/hybrid, Mis
 Create:
 1. 8-12 perfect ATS-friendly resume bullets
 2. A confident, natural cover letter in first person"""
-    result = llm.invoke(prompt)
+    result = get_llm().invoke(prompt)
 
     filename = f"Hunter_Application_{datetime.now().strftime('%Y%m%d_%H%M')}"
     with open(f"{filename}.txt", "w") as f:
         f.write(result)
+    from fpdf import FPDF
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=11)
@@ -88,14 +94,14 @@ def interview(question):
 Use my law enforcement background reframed for cyber roles.
 Give a short, confident STAR answer."""
     print("\n🎤 STAR ANSWER:\n")
-    print(llm.invoke(prompt))
+    print(get_llm().invoke(prompt))
 
 def copilot(task):
     prompt = f"""You are my daily cybersecurity co-pilot. I come from law enforcement.
 Help me handle this task professionally:
 {task}"""
     print("\n💼 CO-PILOT:\n")
-    print(llm.invoke(prompt))
+    print(get_llm().invoke(prompt))
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
